@@ -1,0 +1,3433 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Percentage Exam Mastery Quiz - Bilingual CBT</title>
+  <style>
+    :root {
+      --primary: #1e3a8a;
+      --primary-dark: #172554;
+      --accent: #2563eb;
+      --success: #16a34a;
+      --danger: #dc2626;
+      --warning: #d97706;
+      --purple: #7c3aed;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --border: #cbd5e1;
+      --font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: var(--font-family); }
+    body { background-color: var(--bg); color: var(--text); line-height: 1.6; min-height: 100vh; display: flex; flex-direction: column; }
+    
+    /* Header */
+    header { background: linear-gradient(135deg, var(--primary-dark), var(--primary)); color: #fff; padding: 12px 20px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 50; }
+    .brand-title { font-size: 1.15rem; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+    .brand-sub { font-size: 0.75rem; opacity: 0.85; font-weight: 400; }
+    .timers-wrapper { display: flex; gap: 12px; align-items: center; }
+    .timer-box { background: rgba(255, 255, 255, 0.15); border: 1px solid rgba(255, 255, 255, 0.3); border-radius: 8px; padding: 6px 14px; text-align: center; }
+    .timer-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.9; }
+    .timer-val { font-size: 1.15rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+    .timer-warning { background: #dc2626 !important; animation: pulse 1s infinite alternate; }
+    @keyframes pulse { from { opacity: 1; } to { opacity: 0.7; } }
+
+    /* Main Container */
+    .container { max-width: 1240px; margin: 0 auto; padding: 16px; width: 100%; flex: 1; display: flex; flex-direction: column; }
+    .quiz-layout { display: flex; flex-direction: column; max-width: 900px; margin: 0 auto; gap: 20px; }
+    @media (max-width: 900px) { .quiz-layout { grid-template-columns: 1fr; } }
+
+    /* Card */
+    .card { background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 1px 3px rgba(0,0,0,0.05); padding: 20px; }
+
+    /* Question Panel */
+    .q-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 12px; margin-bottom: 16px; }
+    .q-num-badge { background: #eff6ff; color: var(--primary); font-weight: 700; padding: 4px 12px; border-radius: 20px; font-size: 0.9rem; border: 1px solid #bfdbfe; }
+    .live-q-timer { display: flex; align-items: center; gap: 6px; font-size: 0.85rem; font-weight: 600; color: #475569; background: #f1f5f9; padding: 4px 10px; border-radius: 6px; }
+    .live-q-timer span { color: var(--danger); font-weight: 700; }
+    
+    .lang-tabs { display: flex; gap: 6px; background: #e2e8f0; padding: 3px; border-radius: 8px; font-size: 0.8rem; }
+    .lang-tab { border: none; background: transparent; padding: 4px 10px; border-radius: 6px; cursor: pointer; font-weight: 600; color: #475569; }
+    .lang-tab.active { background: #fff; color: var(--primary); box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
+
+    .q-text-box { margin-bottom: 24px; }
+    .q-text-hi { font-size: 1.15rem; font-weight: 600; color: #1e293b; margin-bottom: 12px; line-height: 1.6; }
+    .q-text-en { font-size: 1rem; color: #334155; line-height: 1.5; font-style: normal; border-left: 3px solid var(--accent); padding-left: 12px; margin-top: 8px; }
+
+    /* Options */
+    .options-grid { display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px; }
+    .option-item { display: flex; align-items: center; padding: 12px 16px; border: 1.5px solid var(--border); border-radius: 8px; cursor: pointer; transition: all 0.2s; background: #fff; }
+    .option-item:hover { border-color: var(--accent); background-color: #f0f7ff; }
+    .option-item.selected { border-color: var(--accent); background-color: #eff6ff; font-weight: 600; box-shadow: 0 0 0 1px var(--accent); }
+    .opt-circle { width: 22px; height: 22px; border-radius: 50%; border: 2px solid #94a3b8; margin-right: 14px; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; flex-shrink: 0; }
+    .option-item.selected .opt-circle { border-color: var(--accent); background-color: var(--accent); color: #fff; }
+    .opt-content { flex: 1; font-size: 0.95rem; }
+
+    /* Action Buttons */
+    .actions-bar { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px; border-top: 1px solid var(--border); padding-top: 16px; }
+    .btn-group { display: flex; gap: 8px; flex-wrap: wrap; }
+    .btn { padding: 9px 18px; border-radius: 8px; font-weight: 600; font-size: 0.9rem; cursor: pointer; border: 1px solid transparent; transition: all 0.15s; display: inline-flex; align-items: center; gap: 6px; }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-primary:hover:not(:disabled) { background: #1d4ed8; }
+    .btn-secondary { background: #e2e8f0; color: #334155; }
+    .btn-secondary:hover:not(:disabled) { background: #cbd5e1; }
+    .btn-outline { background: transparent; border-color: var(--border); color: #475569; }
+    .btn-outline:hover:not(:disabled) { background: #f1f5f9; }
+    .btn-warning { background: #fef3c7; color: #92400e; border-color: #fde68a; }
+    .btn-warning:hover:not(:disabled) { background: #fde68a; }
+    .btn-danger { background: var(--danger); color: #fff; }
+    .btn-danger:hover:not(:disabled) { background: #b91c1c; }
+    .btn-success { background: var(--success); color: #fff; }
+    .btn-success:hover:not(:disabled) { background: #15803d; }
+
+    /* Top Palette Card */
+    .palette-top-card { padding: 14px 18px; margin-bottom: 6px; }
+    .palette-top-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 10px; }
+    .palette-info-left { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .palette-title-text { font-weight: 700; font-size: 0.95rem; color: var(--text-dark); display: flex; align-items: center; gap: 6px; }
+    .palette-badges-summary { display: flex; align-items: center; gap: 8px; font-size: 0.75rem; }
+    .badge-tag { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 9999px; font-weight: 600; }
+    .badge-tag .dot { width: 8px; height: 8px; border-radius: 50%; }
+    .badge-tag.answered { background: #ecfdf5; color: #065f46; }
+    .badge-tag.answered .dot { background: #10b981; }
+    .badge-tag.review { background: #f5f3ff; color: #5b21b6; }
+    .badge-tag.review .dot { background: #8b5cf6; }
+    .badge-tag.skipped { background: #fff1f2; color: #9f1239; }
+    .badge-tag.skipped .dot { background: #f43f5e; }
+    .palette-actions-right { display: flex; align-items: center; gap: 8px; margin-left: auto; }
+    .top-palette-scroller { border-top: 1px solid var(--border); padding-top: 8px; transition: all 0.2s ease; }
+    .top-palette-scroller.strip-mode { overflow-x: auto; white-space: nowrap; padding-bottom: 6px; }
+    .top-palette-scroller.strip-mode .top-palette-container { display: flex; gap: 6px; align-items: center; }
+    .top-palette-scroller.grid-mode { max-height: 240px; overflow-y: auto; padding: 8px 2px; }
+    .top-palette-scroller.grid-mode .top-palette-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(36px, 1fr)); gap: 6px; }
+    .q-badge-btn { min-width: 32px; height: 32px; padding: 0 4px; border: 1px solid var(--border); background: #f1f5f9; color: #334155; font-size: 0.8rem; font-weight: 600; border-radius: 6px; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.15s; }
+    .q-badge-btn:hover { border-color: var(--accent); }
+    .q-badge-btn.current { outline: 2px solid var(--primary); font-weight: 800; transform: scale(1.08); z-index: 2; }
+    /* Status Colors */
+    .status-attempted { background: #22c55e !important; color: #fff !important; border-color: #16a34a !important; }
+    .status-skipped { background: #ef4444 !important; color: #fff !important; border-color: #dc2626 !important; }
+    .status-review { background: #a855f7 !important; color: #fff !important; border-color: #9333ea !important; }
+    .status-review-attempted { background: #7c3aed !important; color: #fff !important; border-color: #6d28d9 !important; }
+    .status-review-attempted::after { content: ""; position: absolute; top: 2px; right: 2px; width: 6px; height: 6px; background: #22c55e; border-radius: 50%; }
+
+    /* Submit Section */
+    .submit-block { border-top: 1px solid var(--border); padding-top: 12px; text-align: center; }
+
+    /* Results Screen */
+    .results-screen { display: none; }
+    .score-banner { background: linear-gradient(135deg, #1e3a8a, #3b82f6); color: #fff; border-radius: 12px; padding: 24px; text-align: center; margin-bottom: 24px; box-shadow: 0 4px 10px rgba(30, 58, 138, 0.2); }
+    .score-val { font-size: 3rem; font-weight: 800; margin: 8px 0; }
+    .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px; margin-top: 16px; }
+    .stat-card { background: rgba(255, 255, 255, 0.15); padding: 10px; border-radius: 8px; }
+    .stat-card .num { font-size: 1.4rem; font-weight: 700; }
+    .stat-card .lbl { font-size: 0.75rem; opacity: 0.9; }
+
+    /* Filter Controls */
+    .table-controls { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; margin-bottom: 12px; gap: 10px; }
+    .filter-tabs { display: flex; gap: 6px; flex-wrap: wrap; }
+    .filter-btn { padding: 6px 12px; border-radius: 6px; border: 1px solid var(--border); background: #fff; font-size: 0.85rem; font-weight: 600; cursor: pointer; }
+    .filter-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+
+    /* Review Table */
+    .table-responsive { overflow-x: auto; border: 1px solid var(--border); border-radius: 8px; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+    table.review-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.9rem; }
+    table.review-table th, table.review-table td { padding: 12px 14px; border-bottom: 1px solid #e2e8f0; }
+    table.review-table th { background: #f8fafc; font-weight: 700; color: #334155; position: sticky; top: 0; }
+    table.review-table tr:hover { background-color: #f8fafc; }
+    
+    .badge { display: inline-block; padding: 4px 8px; border-radius: 4px; font-weight: 700; font-size: 0.75rem; text-transform: uppercase; }
+    .badge-correct { background: #dcfce7; color: #166534; }
+    .badge-wrong { background: #fee2e2; color: #991b1b; }
+    .badge-skipped { background: #f1f5f9; color: #475569; }
+
+    .solution-box { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 6px; padding: 8px 12px; margin-top: 8px; font-size: 0.85rem; color: #166534; display: none; }
+    .sol-toggle { color: var(--accent); font-weight: 600; cursor: pointer; text-decoration: underline; font-size: 0.8rem; border: none; background: none; margin-top: 4px; display: inline-block; }
+
+    /* Modal */
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: none; justify-content: center; align-items: center; z-index: 100; padding: 16px; }
+    .modal { background: #fff; border-radius: 12px; max-width: 440px; width: 100%; padding: 24px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.2); }
+    .modal-title { font-size: 1.25rem; font-weight: 700; margin-bottom: 12px; color: #0f172a; }
+    .modal-body { font-size: 0.95rem; color: #475569; margin-bottom: 20px; line-height: 1.5; }
+    .modal-stats { background: #f8fafc; border-radius: 8px; padding: 12px; margin-bottom: 16px; font-size: 0.85rem; }
+    .modal-actions { display: flex; justify-content: flex-end; gap: 10px; }
+
+    /* Responsive adjustments */
+    @media (max-width: 640px) {
+      header { padding: 10px 14px; }
+      .brand-title { font-size: 1rem; }
+      .timer-box { padding: 4px 8px; }
+      .timer-val { font-size: 0.95rem; }
+      .card { padding: 14px; }
+      .q-text-hi { font-size: 1.05rem; }
+      .actions-bar { justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header with Dual Timers -->
+  <header>
+    <div>
+      <div class="brand-title">📚 Percentage Mastery CBT Exam</div>
+      <div class="brand-sub">SSC CGL / CHSL Bilingual Mock Test</div>
+    </div>
+    <div class="timers-wrapper">
+      <div class="timer-box" id="testTimerBox">
+        <div class="timer-label">Total Time Left</div>
+        <div class="timer-val" id="testTimerDisplay">120:00</div>
+      </div>
+      <div class="timer-box" style="background: rgba(30, 41, 59, 0.4);">
+        <div class="timer-label">Active Question</div>
+        <div class="timer-val" id="qLiveTimerDisplay" style="color: #38bdf8;">00s</div>
+      </div>
+      <button class="btn btn-outline" onclick="openPaletteModal()" style="display:flex; align-items:center; gap:6px; padding: 7px 12px; font-size: 0.85rem; border-color: rgba(255,255,255,0.25); color: #e2e8f0; cursor:pointer;" title="Question Palette">
+        <span>📊 Palette</span>
+        <span id="headerAttemptedBadge" style="background: rgba(56, 189, 248, 0.2); color: #38bdf8; font-size: 0.75rem; padding: 1px 6px; border-radius: 4px; font-family: monospace;">0/187</span>
+      </button>
+      <button class="btn btn-danger" onclick="promptSubmit()" style="padding: 8px 14px; font-size: 0.85rem; cursor:pointer;">Submit Test</button>
+    </div>
+  </header>
+
+  <div class="container">
+    <!-- Active Quiz Screen -->
+    <div id="quizScreen" class="quiz-layout">
+      <div class="card">
+        <div class="table-controls">
+          <h3>Detailed Performance Review Table</h3>
+          <div class="filter-tabs">
+            <button class="filter-btn active" onclick="filterReviewTable('all')">All (<span id="countAll">0</span>)</button>
+            <button class="filter-btn" onclick="filterReviewTable('correct')">Correct (<span id="countCorrect">0</span>)</button>
+            <button class="filter-btn" onclick="filterReviewTable('wrong')">Wrong (<span id="countWrong">0</span>)</button>
+            <button class="filter-btn" onclick="filterReviewTable('skipped')">Skipped (<span id="countSkipped">0</span>)</button>
+          </div>
+          <div>
+            <button class="btn btn-primary" onclick="restartQuiz()">Re-attempt Quiz</button>
+          </div>
+        </div>
+
+        <div class="table-responsive">
+          <table class="review-table">
+            <thead>
+              <tr>
+                <th style="width: 50px;">Q#</th>
+                <th>Question & Detailed Solution</th>
+                <th style="width: 140px;">Your Answer</th>
+                <th style="width: 140px;">Correct Answer</th>
+                <th style="width: 90px;">Status</th>
+                <th style="width: 90px;">Time Spent</th>
+              </tr>
+            </thead>
+            <tbody id="reviewTableBody">
+              <!-- Rows inserted via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Submission Confirmation Modal -->
+  <div class="modal-overlay" id="confirmModal">
+    <div class="modal">
+      <div class="modal-title">Ready to Submit?</div>
+      <div class="modal-body">
+        Are you sure you want to finish the exam? Once submitted, you cannot change your answers.
+      </div>
+      <div class="modal-stats" id="modalSummaryStats">
+        <!-- populated dynamically -->
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" onclick="closeModal()">Continue Test</button>
+        <button class="btn btn-danger" onclick="finalizeSubmission()">Confirm & Submit</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* Question Data set from OCR / PDF scan */
+    const QUESTIONS = [
+  {
+    "id": 1,
+    "questionNumber": 1,
+    "hindi": "यदि किसी आयत की लंबाई 40% तक बढ़ा दी जाती है, और चौड़ाई 20% तक घटा दी जाती है तो आयत का क्षेत्रफल x% बढ़ जाता है तो x का मान क्या है?",
+    "english": "If the length of a rectangle is increased by 40% and the breadth is decreased by 20%, then the area of the rectangle increases by x%. What is the value of x?",
+    "options": [
+      "(a) 16",
+      "(b) 8",
+      "(c) 20",
+      "(d) 12"
+    ],
+    "correctIndex": 3,
+    "explanation": "क्षेत्रफल में प्रतिशत परिवर्तन = a + b + (ab)/100 = 40 - 20 - (40 × 20)/100 = 20 - 8 = +12%. अतः x = 12.",
+    "topic": "Geometry & Successive %"
+  },
+  {
+    "id": 2,
+    "questionNumber": 2,
+    "hindi": "एक आयत की लंबाई और चौड़ाई में क्रमशः 8% की बढ़ोतरी और 10% की कमी की गई है। इसके क्षेत्रफल में प्रतिशत वृद्धि या कमी की गणना करें।",
+    "english": "The length and breadth of a rectangle are increased by 8% and decreased by 10% respectively. Calculate the percentage increase or decrease in its area.",
+    "options": [
+      "(a) Decrease by 1.8% / 1.8% की कमी",
+      "(b) Increase by 1.8% / 1.8% की वृद्धि",
+      "(c) Increase by 2.8% / 2.8% की वृद्धि",
+      "(d) Decrease by 2.8% / 2.8% की कमी"
+    ],
+    "correctIndex": 3,
+    "explanation": "शुद्ध परिवर्तन = 8 - 10 - (8 × 10)/100 = -2 - 0.8 = -2.8% (2.8% की कमी).",
+    "topic": "Geometry & Successive %"
+  },
+  {
+    "id": 3,
+    "questionNumber": 3,
+    "hindi": "एक व्यक्ति के वेतन में 50% की कमी की गई और बाद में 50% की वृद्धि की गई। उसके वेतन में कितने प्रतिशत की वृद्धि या कमी हुई है?",
+    "english": "A person's salary was decreased by 50% and subsequently increased by 50%. How much percent does his salary increase or decrease?",
+    "options": [
+      "(a) Decrease 18%",
+      "(b) Increase 15%",
+      "(c) Increase 20%",
+      "(d) Decrease 25%"
+    ],
+    "correctIndex": 3,
+    "explanation": "कमी = (50² / 100)% = 25% कमी (Decrease 25%).",
+    "topic": "Salary & Percentage Change"
+  },
+  {
+    "id": 4,
+    "questionNumber": 4,
+    "hindi": "किसी वस्तु की कीमत में 36% की वृद्धि हुई और क्रय की गई मात्रा में 30% की कमी हुई। वस्तु पर व्यय की गई राशि में कितने प्रतिशत की वृद्धि या कमी हुई है?",
+    "english": "The price of an article is increased by 36% and the quantity purchased is decreased by 30%. What is the percentage increase or decrease in the amount spent on the article?",
+    "options": [
+      "(a) 6%, increase / वृद्धि",
+      "(b) 4.8%, increase / वृद्धि",
+      "(c) 6%, decrease / कमी",
+      "(d) 4.8%, decrease / कमी"
+    ],
+    "correctIndex": 3,
+    "explanation": "व्यय में परिवर्तन = 36 - 30 - (36 × 30)/100 = 6 - 10.8 = -4.8% (4.8% की कमी).",
+    "topic": "Price & Expenditure"
+  },
+  {
+    "id": 5,
+    "questionNumber": 5,
+    "hindi": "यदि एक आयत की लंबाई में 11% की कमी की जाती है और चौड़ाई में 11% की वृद्धि की जाती है, तो इसका क्षेत्रफल होगा:",
+    "english": "If the length of a rectangle is decreased by 11% and the breadth is increased by 11%, then its area will:",
+    "options": [
+      "(a) 13.13% increase / वृद्धि",
+      "(b) 1.51% decrease / कमी",
+      "(c) 1.21% decrease / कमी",
+      "(d) 13.13% decrease / कमी"
+    ],
+    "correctIndex": 2,
+    "explanation": "परिवर्तन = -11 + 11 - (11 × 11)/100 = -1.21% (1.21% कमी).",
+    "topic": "Geometry & Successive %"
+  },
+  {
+    "id": 6,
+    "questionNumber": 6,
+    "hindi": "एक संख्या में 10% की वृद्धि की जाती है और फिर बढ़ी हुई संख्या में 20% की कमी की जाती है। शुद्ध वृद्धि या कमी कितनी हुई है?",
+    "english": "A number is increased by 10% and then the increased number is decreased by 20%. What is the net increase or decrease?",
+    "options": [
+      "(a) 18% decrease / की कमी",
+      "(b) 2% decrease / की कमी",
+      "(c) 12% decrease / की कमी",
+      "(d) 12% increase / की वृद्धि"
+    ],
+    "correctIndex": 2,
+    "explanation": "शुद्ध परिवर्तन = 10 - 20 - (10 × 20)/100 = -12% (12% कमी).",
+    "topic": "Numbers & Successive %"
+  },
+  {
+    "id": 7,
+    "questionNumber": 7,
+    "hindi": "X के वेतन में 20% की वृद्धि की जाती है और फिर 20% की कमी की जाती है। वेतन में क्या परिवर्तन हुआ है?",
+    "english": "The salary of X is increased by 20% and then decreased by 20%. What is the change in salary?",
+    "options": [
+      "(a) 4% decrease / की कमी",
+      "(b) 4% increase / की वृद्धि",
+      "(c) 2% decrease / की कमी",
+      "(d) 2% increase / की वृद्धि"
+    ],
+    "correctIndex": 0,
+    "explanation": "परिवर्तन = -(20² / 100)% = -4% (4% की कमी).",
+    "topic": "Salary & Percentage Change"
+  },
+  {
+    "id": 8,
+    "questionNumber": 8,
+    "hindi": "यदि एक आयत की लंबाई और चौड़ाई में क्रमशः 15% और 20% की वृद्धि की जाती है, तो आयत के क्षेत्रफल में कितने प्रतिशत की वृद्धि होगी?",
+    "english": "If the length and breadth of a rectangle are increased by 15% and 20% respectively, then by what percentage will the area of the rectangle increase?",
+    "options": [
+      "(a) 32%",
+      "(b) 38%",
+      "(c) 36%",
+      "(d) 48%"
+    ],
+    "correctIndex": 1,
+    "explanation": "क्षेत्रफल वृद्धि = 15 + 20 + (15 × 20)/100 = 38%.",
+    "topic": "Geometry & Successive %"
+  },
+  {
+    "id": 9,
+    "questionNumber": 9,
+    "hindi": "जब एक वस्तु की कीमत में 25% की कमी की गई, तो उसकी बिक्री में 75% की वृद्धि हुई। राजस्व पर शुद्ध प्रभाव की गणना कीजिए।",
+    "english": "When the price of an item was reduced by 25%, its sale increased by 75%. Calculate the net effect on revenue.",
+    "options": [
+      "(a) 31.25% decrease / की कमी",
+      "(b) 31.25% increase / की वृद्धि",
+      "(c) 39.75% increase / की वृद्धि",
+      "(d) 39.75% decrease / की कमी"
+    ],
+    "correctIndex": 1,
+    "explanation": "राजस्व प्रभाव = -25 + 75 - (25 × 75)/100 = 50 - 18.75 = +31.25% वृद्धि.",
+    "topic": "Price & Expenditure"
+  },
+  {
+    "id": 10,
+    "questionNumber": 10,
+    "hindi": "किसी वस्तु के मूल्य में 30% की कमी होती है, लेकिन उसकी दैनिक बिक्री में 35% की वृद्धि होती है। दैनिक बिक्री की प्राप्तियों पर शुद्ध प्रतिशत प्रभाव क्या होगा?",
+    "english": "The price of an article is reduced by 30% but daily sale of the article is increased by 35%. What will be the net percentage effect on daily sale receipts?",
+    "options": [
+      "(a) 6 1/2 % increase / वृद्धि",
+      "(b) 5 1/2 % increase / वृद्धि",
+      "(c) 5 1/2 % decrease / कमी",
+      "(d) 6 1/2 % decrease / कमी"
+    ],
+    "correctIndex": 2,
+    "explanation": "शुद्ध प्रभाव = -30 + 35 - (30 × 35)/100 = 5 - 10.5 = -5.5% = 5 1/2% कमी.",
+    "topic": "Price & Expenditure"
+  },
+  {
+    "id": 11,
+    "questionNumber": 11,
+    "hindi": "जब किसी वस्तु की मूल्य में 20% की कमी हुई, तो उसकी बिक्री में x% की वृद्धि हुई। यदि राजस्व प्राप्ति में 60% की वृद्धि हुई है, तो x का मान है:",
+    "english": "When the price of an article was reduced by 20%, its sale increased by x%. If revenue increased by 60%, then the value of x is:",
+    "options": [
+      "(a) 120",
+      "(b) 96",
+      "(c) 100",
+      "(d) 80"
+    ],
+    "correctIndex": 2,
+    "explanation": "0.80 × (1 + x/100) = 1.60 => 1 + x/100 = 2 => x = 100.",
+    "topic": "Price & Expenditure"
+  },
+  {
+    "id": 12,
+    "questionNumber": 12,
+    "hindi": "डीजल की कीमत में 16% की वृद्धि होती है। एक व्यक्ति अपने डीजल के व्यय में केवल 10% की वृद्धि करना चाहता है। उसे अपनी खपत को कितने प्रतिशत (दशमलव के एक स्थान तक शुद्ध) कम करना होगा?",
+    "english": "The price of diesel is increased by 16%. A person wants to increase his expenditure on diesel by 10% only. By what percentage (correct to one decimal place) should he reduce his consumption?",
+    "options": [
+      "(a) 5.2%",
+      "(b) 6.5%",
+      "(c) 3.7%",
+      "(d) 4.5%"
+    ],
+    "correctIndex": 0,
+    "explanation": "कमी = (116 - 110)/116 × 100 = 600/116 ≈ 5.2%.",
+    "topic": "Price & Expenditure"
+  },
+  {
+    "id": 13,
+    "questionNumber": 13,
+    "hindi": "चाय की कीमत में 20% की वृद्धि हुई है लेकिन मैंने चाय के लिए अपने खर्च को केवल 15% बढ़ाने का फैसला किया। चाय के लिए खर्चों के समान स्तर को बनाए रखने में सक्षम होने के लिए मुझे अपनी खपत (दशमलव के एक स्थान तक) को कितने प्रतिशत कम करना चाहिए?",
+    "english": "The price of tea has increased by 20% but I have decided to increase my expenditure on tea by only 15%. By what percentage (correct to one decimal place) should I reduce my consumption?",
+    "options": [
+      "(a) 5.4",
+      "(b) 4.2",
+      "(c) 5.6",
+      "(d) 4.8"
+    ],
+    "correctIndex": 1,
+    "explanation": "कमी = (120 - 115)/120 × 100 = 5/120 × 100 = 4.166% ≈ 4.2%.",
+    "topic": "Price & Expenditure"
+  },
+  {
+    "id": 14,
+    "questionNumber": 14,
+    "hindi": "चीनी के मूल्य में 25% की वृद्धि हुई। चीनी पर व्यय का वही स्तर बनाए रखने के लिए, एक व्यक्ति ने अपने उपभोग में 4% की कमी कर दी और चीनी पर अपने व्यय में x% की वृद्धि कर ली। x का मान क्या है?",
+    "english": "The price of sugar increased by 25%. In order to maintain the expenditure level, a person reduced his consumption by 4% and increased his expenditure by x%. What is the value of x?",
+    "options": [
+      "(a) 19.5",
+      "(b) 21",
+      "(c) 20",
+      "(d) 18.75"
+    ],
+    "correctIndex": 2,
+    "explanation": "व्यय = 1.25 × 0.96 = 1.20 => 20% वृद्धि, x = 20.",
+    "topic": "Price & Expenditure"
+  },
+  {
+    "id": 15,
+    "questionNumber": 15,
+    "hindi": "जब एक घड़ी की कीमत में 20% की कमी की जाती है, तो बेची गई घड़ियों की संख्या में 40% की वृद्धि होती है। प्रतिशत में बिक्री पर क्या प्रभाव पड़ा?",
+    "english": "When the price of a watch is reduced by 20%, the number of watches sold is increased by 40%. What was the effect on sales in percentage?",
+    "options": [
+      "(a) 12% increase",
+      "(b) 30% decrease",
+      "(c) 12% decrease",
+      "(d) 30% increase"
+    ],
+    "correctIndex": 0,
+    "explanation": "-20 + 40 - (20 × 40)/100 = 12% increase.",
+    "topic": "Price & Expenditure"
+  },
+  {
+    "id": 16,
+    "questionNumber": 16,
+    "hindi": "यदि किसी वस्तु पर कर में 20% की कमी की जाती है और उसकी खपत में 15% की वृद्धि की जाती है, तो राजस्व में कितनी कमी होगी?",
+    "english": "If the tax on a commodity is diminished by 20% and its consumption increases by 15%, find the decrease percent in the revenue.",
+    "options": [
+      "(a) 8%",
+      "(b) 12%",
+      "(c) 10%",
+      "(d) 6%"
+    ],
+    "correctIndex": 0,
+    "explanation": "-20 + 15 - 3 = -8% (8% कमी).",
+    "topic": "Tax & Consumption"
+  },
+  {
+    "id": 17,
+    "questionNumber": 17,
+    "hindi": "एक पेन की कीमत में पहले 15% की वृद्धि की जाती है और बाद में बिक्री में कमी आने के कारण कीमत में 20% की कमी कर दी जाती है। पेन के अंतिम मूल्य में शुद्ध प्रतिशत परिवर्तन ज्ञात करें।",
+    "english": "The price of a pen is first increased by 15% and later on due to reduction in sales, the price is reduced by 20%. Find the net percentage change in the final price of the pen.",
+    "options": [
+      "(a) 25%",
+      "(b) 8%",
+      "(c) -8%",
+      "(d) -16%"
+    ],
+    "correctIndex": 2,
+    "explanation": "15 - 20 - 3 = -8%.",
+    "topic": "Successive Change"
+  },
+  {
+    "id": 18,
+    "questionNumber": 18,
+    "hindi": "जब चीनी के मूल्य में 50% की वृद्धि होती है तो एक व्यक्ति चीनी पर अपने व्यय को केवल 25% बढ़ाता है। उसे चीनी के उपभोग में कितने प्रतिशत (दशमलव के दो स्थानों तक) की कमी करनी होगी?",
+    "english": "When the price of sugar increases by 50%, a person increases his expenditure on sugar by only 25%. By what percentage (correct to two decimal places) should he reduce his consumption of sugar?",
+    "options": [
+      "(a) 12.75%",
+      "(b) 15.75%",
+      "(c) 16.67%",
+      "(d) 11.54%"
+    ],
+    "correctIndex": 2,
+    "explanation": "(150 - 125)/150 × 100 = 25/150 × 100 = 16.67%.",
+    "topic": "Price & Expenditure"
+  },
+  {
+    "id": 19,
+    "questionNumber": 19,
+    "hindi": "एक परिवार के लिए चीनी की कुल खपत 20 किलो प्रति माह थी। जैसे ही चीनी की कीमत में 35% की वृद्धि हुई, परिवार ने इसकी खपत कम कर दी ताकि चीनी पर खर्च केवल 8% बढ़े। चीनी की कीमत में वृद्धि के कारण प्रति माह चीनी की खपत कितनी कम हो गई?",
+    "english": "The total consumption of sugar for a family was 20 kg per month. As the price of sugar increased by 35%, the family reduced its consumption so that the expenditure on sugar increased by only 8%. Due to increase in the price of sugar, by how much was the monthly consumption of sugar reduced?",
+    "options": [
+      "(a) 6 kg",
+      "(b) 5 kg",
+      "(c) 2.5 kg",
+      "(d) 4 kg"
+    ],
+    "correctIndex": 3,
+    "explanation": "नई खपत = 20 × (108/135) = 16 kg. कमी = 20 - 16 = 4 kg.",
+    "topic": "Price & Expenditure"
+  },
+  {
+    "id": 20,
+    "questionNumber": 20,
+    "hindi": "जब चीनी के मूल्य में 28% की वृद्धि हुई, तो एक परिवार ने इसकी मासिक खपत को इतना कम कर दिया कि अब चीनी पर होने वाला व्यय पहले की तुलना में केवल 12% अधिक था। यदि परिवार में पहले चीनी की मासिक खपत 18.4 kg थी, तो चीनी की नई मासिक खपत कितनी है?",
+    "english": "When the price of sugar increased by 28%, a family reduced its monthly consumption such that the expenditure on sugar was only 12% more than earlier. If the family's earlier monthly consumption of sugar was 18.4 kg, what is the new monthly consumption of sugar?",
+    "options": [
+      "(a) 16.6 kg",
+      "(b) 16.1 kg",
+      "(c) 15.75 kg",
+      "(d) 15.8 kg"
+    ],
+    "correctIndex": 1,
+    "explanation": "नई खपत = 18.4 × (112/128) = 16.1 kg.",
+    "topic": "Price & Expenditure"
+  },
+  {
+    "id": 21,
+    "questionNumber": 21,
+    "hindi": "एक संख्या में 30% की वृद्धि हुई, फिर 25% की कमी आई, फिर 25% की वृद्धि हुई। संख्या में कितने प्रतिशत की शुद्ध वृद्धि/कमी (निकटतम पूर्णांक में) हुई?",
+    "english": "A number is increased by 30%, then decreased by 25%, and then further increased by 25%. What is the net increase/decrease percentage in the number (correct to the nearest integer)?",
+    "options": [
+      "(a) 22% decrease / 22% कमी",
+      "(b) 22% increase / 22% वृद्धि",
+      "(c) 21% decrease / 21% कमी",
+      "(d) 21% increase / 21% वृद्धि"
+    ],
+    "correctIndex": 1,
+    "explanation": "100 × 1.30 × 0.75 × 1.25 = 121.875% => 22% वृद्धि (increase).",
+    "topic": "Successive Percentage"
+  },
+  {
+    "id": 22,
+    "questionNumber": 22,
+    "hindi": "एक संख्या में 30% की कमी की गई, फिर 30% की वृद्धि हुई, फिर दोबारा 30% की वृद्धि हुई। संख्या में कितने प्रतिशत की शुद्ध वृद्धि/कमी (निकटतम पूर्णांक तक सही) हुई?",
+    "english": "A number is decreased by 30%, then increased by 30%, then again increased by 30%. What is the net increase/decrease percentage in the number (correct to the nearest integer)?",
+    "options": [
+      "(a) 18% increase / 18% की वृद्धि",
+      "(b) 18% decrease / 18% की कमी",
+      "(c) 19% decrease / 19% की कमी",
+      "(d) 19% increase / 19% की वृद्धि"
+    ],
+    "correctIndex": 0,
+    "explanation": "100 × 0.70 × 1.30 × 1.30 = 118.3% => 18% वृद्धि (increase).",
+    "topic": "Successive Percentage"
+  },
+  {
+    "id": 23,
+    "questionNumber": 23,
+    "hindi": "किसी संख्या में पहले 40% की वृद्धि हुई और फिर 25% की कमी हुई, फिर से 15% की वृद्धि के बाद 20% की कमी हुई। संख्या में हुई शुद्ध वृद्धि/कमी प्रतिशत ज्ञात करें।",
+    "english": "A number is first increased by 40%, then decreased by 25%, again increased by 15% and then decreased by 20%. Find the net increase/decrease percentage in the number.",
+    "options": [
+      "(a) 7.2% decrease",
+      "(b) 6.4% increase",
+      "(c) 3.4% increase",
+      "(d) 3.4% decrease"
+    ],
+    "correctIndex": 3,
+    "explanation": "100 × 1.40 × 0.75 × 1.15 × 0.80 = 96.6% => 3.4% decrease.",
+    "topic": "Successive Percentage"
+  },
+  {
+    "id": 24,
+    "questionNumber": 24,
+    "hindi": "यदि किसी वर्ग की प्रत्येक भुजा को 17% कम कर दिया जाए, तो इसका क्षेत्रफल कितने प्रतिशत कम हो जाएगा?",
+    "english": "If each side of a square is decreased by 17%, then by what percentage does its area decrease?",
+    "options": [
+      "(a) 31.11%",
+      "(b) 25%",
+      "(c) 30.79%",
+      "(d) 44.31%"
+    ],
+    "correctIndex": 0,
+    "explanation": "-17 - 17 + (17 × 17)/100 = -34 + 2.89 = -31.11%.",
+    "topic": "Geometry & Area"
+  },
+  {
+    "id": 25,
+    "questionNumber": 25,
+    "hindi": "यदि आयत की प्रत्येक भुजा 11% कम कर दी जाए, तो इसका क्षेत्रफल कितने प्रतिशत कम हो जाएगा?",
+    "english": "If each side of a rectangle is decreased by 11%, then its area will decrease by what percentage?",
+    "options": [
+      "(a) 21.69%",
+      "(b) 20.79%",
+      "(c) 13.13%",
+      "(d) 26.78%"
+    ],
+    "correctIndex": 1,
+    "explanation": "-11 - 11 + 1.21 = -20.79%.",
+    "topic": "Geometry & Area"
+  },
+  {
+    "id": 26,
+    "questionNumber": 26,
+    "hindi": "किसी आयताकार मैदान की प्रत्येक भुजा में 10% की वृद्धि की जाती है। मैदान के क्षेत्रफल में हुई प्रतिशत वृद्धि ज्ञात कीजिए।",
+    "english": "Each side of a rectangular field is increased by 10%. Find the percentage increase in the area of the field.",
+    "options": [
+      "(a) 10%",
+      "(b) 15%",
+      "(c) 18%",
+      "(d) 21%"
+    ],
+    "correctIndex": 3,
+    "explanation": "10 + 10 + (10 × 10)/100 = 21%.",
+    "topic": "Geometry & Area"
+  },
+  {
+    "id": 27,
+    "questionNumber": 27,
+    "hindi": "एक संख्या में पहले 35% की वृद्धि की जाती है और फिर पुनः 25% की वृद्धि की जाती है। इस प्रकार प्राप्त संख्या में 4% की कमी की जाती है। संख्या में हुई वृद्धि या कमी का प्रतिशत कितना है?",
+    "english": "A number is first increased by 35% and then again increased by 25%. The number so obtained is decreased by 4%. What is the percentage increase or decrease in the number?",
+    "options": [
+      "(a) increase by 20%",
+      "(b) decrease by 1.25%",
+      "(c) decrease by 12.5%",
+      "(d) increase by 1.25%"
+    ],
+    "correctIndex": 0,
+    "explanation": "यदि संख्या में 25% वृद्धि और 4% कमी हो तो 1.25 × 0.96 = 1.20 => 20% वृद्धि.",
+    "topic": "Successive Percentage"
+  },
+  {
+    "id": 28,
+    "questionNumber": 28,
+    "hindi": "यदि किसी लंबवृत्तीय बेलन की त्रिज्या को 20% कम किया जाता है, जबकि ऊँचाई 40% को बढ़ाया जाता है, तो उसके आयतन में प्रतिशत परिवर्तन कितना होगा?",
+    "english": "If the radius of a right circular cylinder is decreased by 20%, while the height is increased by 40%, what is the percentage change in its volume?",
+    "options": [
+      "(a) No increase no decrease / न वृद्धि, न ही गिरावट",
+      "(b) 10.4% decrease / गिरावट",
+      "(c) 1.04% increase / वृद्धि",
+      "(d) 10.4% increase / वृद्धि"
+    ],
+    "correctIndex": 1,
+    "explanation": "आयतन = r² × h => (0.8)² × 1.4 = 0.64 × 1.4 = 0.896 = 10.4% गिरावट (decrease).",
+    "topic": "Geometry & Volume"
+  },
+  {
+    "id": 29,
+    "questionNumber": 29,
+    "hindi": "यदि किसी लंब वृत्तीय बेलन के आधार की त्रिज्या में 20% की वृद्धि होती है और ऊंचाई में 30% की कमी होती है, तो आयतन में हुई प्रतिशत वृद्धि/कमी ज्ञात कीजिए।",
+    "english": "If the radius of base of a right circular cylinder is increased by 20% and height is decreased by 30%, find % increase/decrease in volume.",
+    "options": [
+      "(a) Increase 2%",
+      "(b) Decrease 0.8%",
+      "(c) Increase 0.8%",
+      "(d) Decrease 2%"
+    ],
+    "correctIndex": 2,
+    "explanation": "(1.2)² × 0.70 = 1.44 × 0.70 = 1.008 = +0.8% increase.",
+    "topic": "Geometry & Volume"
+  },
+  {
+    "id": 30,
+    "questionNumber": 30,
+    "hindi": "किसी संख्या को पहले 16% और फिर से 14% बढ़ाया जाता है। इस प्रकार प्राप्त संख्या को 30% घटाया जाता है। मूल संख्या में हुई वृद्धि या गिरावट का शुद्ध प्रतिशत क्या है? (एक पूर्णांक के निकटतम)",
+    "english": "A number is first increased by 16% and then by 14%. The number so obtained is decreased by 30%. What is the net percentage increase or decrease in the original number (nearest to an integer)?",
+    "options": [
+      "(a) 6% increase / की वृद्धि",
+      "(b) 9% decrease / की गिरावट",
+      "(c) 7% decrease / की गिरावट",
+      "(d) No increment no decrement / न कोई वृद्धि, न कोई गिरावट"
+    ],
+    "correctIndex": 2,
+    "explanation": "1.16 × 1.14 × 0.70 = 0.92568 => 7.43% कमी ≈ 7% decrease.",
+    "topic": "Successive Percentage"
+  },
+  {
+    "id": 31,
+    "questionNumber": 31,
+    "hindi": "मोहित का वेतन विजय के वेतन से 60 प्रतिशत अधिक है। विजय का वेतन मोहित के वेतन से कितना प्रतिशत कम है?",
+    "english": "Mohit's salary is 60% more than Vijay's salary. How much percent is Vijay's salary less than Mohit's salary?",
+    "options": [
+      "(a) 42.5",
+      "(b) 47.5",
+      "(c) 45",
+      "(d) 37.5"
+    ],
+    "correctIndex": 3,
+    "explanation": "(60 / 160) × 100 = 37.5%.",
+    "topic": "Percentage Comparison"
+  },
+  {
+    "id": 32,
+    "questionNumber": 32,
+    "hindi": "यदि A की आय, B की आय से 60% कम है तो B की आय, A की आय से कितने प्रतिशत अधिक है?",
+    "english": "If income of A is 60% less than that of B, then B's income is what percent more than A's income?",
+    "options": [
+      "(a) 150%",
+      "(b) 80%",
+      "(c) 120%",
+      "(d) 40%"
+    ],
+    "correctIndex": 0,
+    "explanation": "(60 / 40) × 100 = 150%.",
+    "topic": "Percentage Comparison"
+  },
+  {
+    "id": 33,
+    "questionNumber": 33,
+    "hindi": "यदि एक आयत की लंबाई में 40% की वृद्धि होती है, तो क्षेत्रफल को समान बनाए रखने के लिए इसकी चौड़ाई में कितने प्रतिशत की कमी करनी पड़ेगी (दशमलव के एक स्थान तक सही)?",
+    "english": "If the length of a rectangle is increased by 40%, by what percentage must its breadth be decreased to maintain the same area (correct to one decimal place)?",
+    "options": [
+      "(a) 37.5%",
+      "(b) 33.5%",
+      "(c) 28.6%",
+      "(d) 42.5%"
+    ],
+    "correctIndex": 2,
+    "explanation": "(40 / 140) × 100 = 200/7% ≈ 28.6%.",
+    "topic": "Geometry & Area"
+  },
+  {
+    "id": 34,
+    "questionNumber": 34,
+    "hindi": "यदि चावल की कीमत में 20% की वृद्धि होती है, तो एक व्यक्ति को चावल की खपत में कितने प्रतिशत की कमी करनी चाहिए ताकि उसका खर्च पहले जितना रहे? (दशमलव के बाद एक स्थान तक शुद्ध)",
+    "english": "If the price of rice increases by 20%, by what percentage should a person decrease consumption so that expenditure remains unchanged?",
+    "options": [
+      "(a) 14.7%",
+      "(b) 18.7%",
+      "(c) 16.7%",
+      "(d) 14.7%"
+    ],
+    "correctIndex": 2,
+    "explanation": "(20 / 120) × 100 = 16.67% ≈ 16.7%.",
+    "topic": "Price & Expenditure"
+  },
+  {
+    "id": 35,
+    "questionNumber": 35,
+    "hindi": "मोहन की आय श्याम से 40% अधिक है। श्याम की आय मोहन की आय से कितना प्रतिशत कम है?",
+    "english": "Mohan's income is 40% more than Shyam's income. By what percent is Shyam's income less than Mohan's income?",
+    "options": [
+      "(a) 28 2/7 %",
+      "(b) 28 5/7 %",
+      "(c) 28 3/7 %",
+      "(d) 28 4/7 %"
+    ],
+    "correctIndex": 3,
+    "explanation": "(40 / 140) × 100 = 200/7% = 28 4/7%.",
+    "topic": "Percentage Comparison"
+  },
+  {
+    "id": 36,
+    "questionNumber": 36,
+    "hindi": "सचिन की आय, दिलीप की आय से 25% अधिक है। दिलीप की आय, सचिन की आय से कितने प्रतिशत कम है?",
+    "english": "Sachin's income is 25% more than Dileep's income. By how much percent is Dileep's income less than Sachin's income?",
+    "options": [
+      "(a) 15%",
+      "(b) 20%",
+      "(c) 18%",
+      "(d) 22%"
+    ],
+    "correctIndex": 1,
+    "explanation": "(25 / 125) × 100 = 20%.",
+    "topic": "Percentage Comparison"
+  },
+  {
+    "id": 37,
+    "questionNumber": 37,
+    "hindi": "रीता की आय रिचा से 15% कम है। रिचा की आय रीता की आय से कितने प्रतिशत अधिक है?",
+    "english": "Rita's income is 15% less than Richa's income. By what percent is Richa's income more than Rita's income?",
+    "options": [
+      "(a) 15 11/17 %",
+      "(b) 17 11/17 %",
+      "(c) 16 11/17 %",
+      "(d) 14 11/17 %"
+    ],
+    "correctIndex": 1,
+    "explanation": "(15 / 85) × 100 = 300/17% = 17 11/17%.",
+    "topic": "Percentage Comparison"
+  },
+  {
+    "id": 38,
+    "questionNumber": 38,
+    "hindi": "रीता की आय रिचा से 15% कम है। रिचा की आय रीता की आय से कितने प्रतिशत अधिक है?",
+    "english": "Rita's income is 15% less than Richa's income. By what percent is Richa's income more than Rita's income?",
+    "options": [
+      "(a) 15 11/17 %",
+      "(b) 17 11/17 %",
+      "(c) 16 11/17 %",
+      "(d) 14 11/17 %"
+    ],
+    "correctIndex": 1,
+    "explanation": "15 / (100 - 15) × 100 = 300/17% = 17 11/17%.",
+    "topic": "Percentage Comparison"
+  },
+  {
+    "id": 39,
+    "questionNumber": 39,
+    "hindi": "यदि A की आय B की आय से 24% कम है, तो B की आय A की तुलना में कितने प्रतिशत अधिक है?",
+    "english": "If income of A is 24% less than that of B, then what percentage is B's income more than that of A?",
+    "options": [
+      "(a) 600/19 %",
+      "(b) 600/29 %",
+      "(c) 600/17 %",
+      "(d) 600/31 %"
+    ],
+    "correctIndex": 0,
+    "explanation": "(24 / 76) × 100 = 600/19%.",
+    "topic": "Percentage Comparison"
+  },
+  {
+    "id": 40,
+    "questionNumber": 40,
+    "hindi": "यदि A की आय B की आय से 40% अधिक है तो B की आय A की आय से कितना प्रतिशत कम है।",
+    "english": "If income of A is 40% more than B's income, then by what percent is B's income less than A's income?",
+    "options": [
+      "(a) 27 4/7 %",
+      "(b) 28 5/7 %",
+      "(c) 27 5/7 %",
+      "(d) 28 4/7 %"
+    ],
+    "correctIndex": 3,
+    "explanation": "(40 / 140) × 100 = 200/7% = 28 4/7%.",
+    "topic": "Percentage Comparison"
+  },
+  {
+    "id": 41,
+    "questionNumber": 41,
+    "hindi": "चीनी की कीमत में 20% की वृद्धि की गई है। चीनी की खपत में कितने प्रतिशत की कटौती की जानी चाहिए, जिससे चीनी पर हुए व्यय में कोई अतिरिक्त वृद्धि न हो?",
+    "english": "Price of sugar has increased by 20%. By what percentage should the consumption be reduced so that expenditure does not increase?",
+    "options": [
+      "(a) 16 2/3 %",
+      "(b) 20%",
+      "(c) 83 1/3 %",
+      "(d) 80%"
+    ],
+    "correctIndex": 0,
+    "explanation": "(20 / 120) × 100 = 16 2/3%.",
+    "topic": "Price & Expenditure"
+  },
+  {
+    "id": 42,
+    "questionNumber": 42,
+    "hindi": "राजू की आय उसके व्यय से 20% अधिक है। यदि उसकी आय में 60% और उसके व्यय में 70% की वृद्धि होती है, तो उसकी बचत कितने प्रतिशत बढ़ेगी/कम होगी?",
+    "english": "Raju's income is 20% more than his expenditure. If his income increases by 60% and his expenditure by 70%, then by what percent will his savings increase/decrease?",
+    "options": [
+      "(a) It decreased by 10% / 10% कम होगी",
+      "(b) It decreased by 2% / 2% कम होगी",
+      "(c) It increases by 10% / 10% बढ़ेगी",
+      "(d) It increases by 2% / 2% बढ़ेगी"
+    ],
+    "correctIndex": 2,
+    "explanation": "व्यय 100, आय 120, बचत 20। नई आय 192, व्यय 170, बचत 22। बचत में वृद्धि = (2/20) × 100 = 10% बढ़ेगी।",
+    "topic": "Income & Expenditure"
+  },
+  {
+    "id": 43,
+    "questionNumber": 43,
+    "hindi": "A की आय B से 40% अधिक है। यदि A की आय में 25% वृद्धि होती है और B की आय में 40% वृद्धि होती है, तो A और B के संयुक्त आय में वृद्धि प्रतिशत है :",
+    "english": "A's income is 40% more than B. If A's income increases by 25% and B's by 40%, find % increase in their combined income:",
+    "options": [
+      "(a) 31.25",
+      "(b) 34.5",
+      "(c) 28.25",
+      "(d) 24.5"
+    ],
+    "correctIndex": 0,
+    "explanation": "B = 100, A = 140। कुल वृद्धि = 35 + 40 = 75। प्रतिशत = (75 / 240) × 100 = 31.25%.",
+    "topic": "Income & Expenditure"
+  },
+  {
+    "id": 44,
+    "questionNumber": 44,
+    "hindi": "सुधा अपनी आय का 15% बचाती है। यदि उसका व्यय 20% बढ़ता है और बचत में 60% की वृद्धि होती, है, तो उसकी आय में कितने प्रतिशत की वृद्धि हुई है?",
+    "english": "Sudha saves 15% of her income. If her expenditure increases by 20% and savings increase by 60%, by what percent has her income increased?",
+    "options": [
+      "(a) 26",
+      "(b) 35",
+      "(c) 24",
+      "(d) 30"
+    ],
+    "correctIndex": 0,
+    "explanation": "आय वृद्धि = 85 × 0.20 + 15 × 0.60 = 17 + 9 = 26%.",
+    "topic": "Income & Expenditure"
+  },
+  {
+    "id": 45,
+    "questionNumber": 45,
+    "hindi": "A की आय B की आय से 50% अधिक है। यदि A की आय में 40% की वृद्धि हुई है और B की आय में 90% की वृद्धि हुई है, तो उनकी संयुक्त आय में प्रतिशत वृद्धि होगी:",
+    "english": "Income of A is 50% more than B. If A's income increased by 40% and B's by 90%, percentage increase in combined income is:",
+    "options": [
+      "(a) 64",
+      "(b) 55",
+      "(c) 60",
+      "(d) 70"
+    ],
+    "correctIndex": 2,
+    "explanation": "B = 100, A = 150। वृद्धि = 60 + 90 = 150। (150 / 250) × 100 = 60%.",
+    "topic": "Income & Expenditure"
+  },
+  {
+    "id": 46,
+    "questionNumber": 46,
+    "hindi": "किसी परीक्षा में, उपस्थित होने वाले सभी छात्रों में से 45% छात्र, लड़के हैं और शेष लड़कियां हैं। यदि 60% लड़के और 70% लड़कियां उत्तीर्ण हुई हों, तो अनुत्तीर्ण होने वाले छात्रों का प्रतिशत ज्ञात करें।",
+    "english": "In an examination, 45% of students are boys and rest girls. If 60% boys and 70% girls passed, find fail percentage of students.",
+    "options": [
+      "(a) 36",
+      "(b) 35.4",
+      "(c) 40",
+      "(d) 34.5"
+    ],
+    "correctIndex": 3,
+    "explanation": "अनुत्तीर्ण = 45 × 0.40 + 55 × 0.30 = 18 + 16.5 = 34.5%.",
+    "topic": "Exam & Pass/Fail"
+  },
+  {
+    "id": 47,
+    "questionNumber": 47,
+    "hindi": "लक्की, अपनी आय का 85% खर्च करती है। यदि उसके व्यय में x% की वृद्धि होती है, बचत में 60% की वृद्धि होती है और आय में 26% की वृद्धि होती है, तो x का मान ज्ञात करें।",
+    "english": "Lucky spends 85% of income. If expenditure increases by x%, savings increase by 60% and income increases by 26%, find value of x.",
+    "options": [
+      "(a) 30",
+      "(b) 34",
+      "(c) 26",
+      "(d) 20"
+    ],
+    "correctIndex": 3,
+    "explanation": "व्यय वृद्धि = 26 - (15 × 0.60) = 17। x = (17 / 85) × 100 = 20%.",
+    "topic": "Income & Expenditure"
+  },
+  {
+    "id": 48,
+    "questionNumber": 48,
+    "hindi": "A अपनी आय का 65% खर्च करता है। उसकी आय में 20.1% की वृद्धि होती है और व्यय में 20% की वृद्धि होती है। उसकी बचत में कितने प्रतिशत (दशमलव के एक स्थान तक सही) वृद्धि या कमी होती है?",
+    "english": "A spends 65% of income. Income increases by 20.1% and expenditure by 20%. Find % increase/decrease in savings:",
+    "options": [
+      "(a) Increase by 20.3% / 20.3% की वृद्धि",
+      "(b) Decrease by 17.7% / 17.7% की कमी",
+      "(c) Increase by 21.5% / 21.5% की वृद्धि",
+      "(d) Decrease by 18.9% / 18.9% की कमी"
+    ],
+    "correctIndex": 0,
+    "explanation": "बचत वृद्धि = 20.1 - 13 = 7.1। (7.1 / 35) × 100 = 20.28% ≈ 20.3% वृद्धि।",
+    "topic": "Income & Expenditure"
+  },
+  {
+    "id": 49,
+    "questionNumber": 49,
+    "hindi": "एक व्यक्ति अपनी आय का 2/3 भाग खर्च करता हैं। यदि उसकी आय में 14% वृद्धि हो जाती है और व्यय में 20% की वृद्धि हो जाती हैं, तो व्यक्ति की बचत में कितने प्रतिशत वृद्धि होगी?",
+    "english": "A person spends 2/3 of his income. If income increases by 14% and expenditure by 20%, find percentage increase in savings:",
+    "options": [
+      "(a) 1%",
+      "(b) 2%",
+      "(c) 4%",
+      "(d) 6%"
+    ],
+    "correctIndex": 1,
+    "explanation": "आय 300, व्यय 200, बचत 100। नई बचत = 342 - 240 = 102 => 2% वृद्धि।",
+    "topic": "Income & Expenditure"
+  },
+  {
+    "id": 50,
+    "questionNumber": 50,
+    "hindi": "120 प्रश्नों वाली एक परीक्षा में, अनुराधा ने पहले 60 प्रश्नों में से 65% का सही उत्तर दिया। परीक्षा में 75% अंक प्राप्त करने के लिए उसे शेष कितने प्रतिशत प्रश्नों के सही उत्तर देने होगें?",
+    "english": "In an exam of 120 questions, Anuradha answered 65% of first 60 correctly. What % of remaining must she answer correctly to score 75% overall?",
+    "options": [
+      "(a) 80",
+      "(b) 85",
+      "(c) 84",
+      "(d) 90"
+    ],
+    "correctIndex": 1,
+    "explanation": "कुल सही 90। पहले 60 में 39। शेष 60 में 51 सही चाहिए => (51/60) × 100 = 85%.",
+    "topic": "Exam & Pass/Fail"
+  },
+  {
+    "id": 51,
+    "questionNumber": 51,
+    "hindi": "किसी व्यक्ति के व्यय और बचत का अनुपात 5 : 3 हैं यदि उसकी आय में 20% की वृद्धि और उसके व्यय में 10% की वृद्धि हो जाती हैं, तो व्यक्ति की बचत में कितनी वृद्धि होगी?",
+    "english": "Ratio of expenditure to savings of a person is 5 : 3. If income increases by 20% and expenditure by 10%, find % increase in savings:",
+    "options": [
+      "(a) 36 2/3 %",
+      "(b) 3 1/3 %",
+      "(c) 13 2/3 %",
+      "(d) 30 1/3 %"
+    ],
+    "correctIndex": 0,
+    "explanation": "आय 80, व्यय 50, बचत 30। आय वृद्धि = 16, व्यय वृद्धि = 5 => बचत वृद्धि = 11। (11/30) × 100 = 36 2/3%.",
+    "topic": "Income & Expenditure"
+  },
+  {
+    "id": 52,
+    "questionNumber": 52,
+    "hindi": "A की आय B की आय से 40% कम है। यदि A की आय में, 25% की वृद्धि और B की आय में, 40% की वृद्धि होती है, तो A और B की संयुक्त आय में प्रतिशत वृद्धि (दो दशमलव स्थानों तक गणना करें) होगी।",
+    "english": "Income of A is 40% less than B. If A's income increases by 25% and B's by 40%, find % increase in combined income:",
+    "options": [
+      "(a) 35.19",
+      "(b) 37.86",
+      "(c) 31.67",
+      "(d) 34.38"
+    ],
+    "correctIndex": 3,
+    "explanation": "B = 100, A = 60। कुल वृद्धि = 15 + 40 = 55। (55 / 160) × 100 = 34.38%.",
+    "topic": "Income & Expenditure"
+  },
+  {
+    "id": 53,
+    "questionNumber": 53,
+    "hindi": "किसी कॉलेज में 35% छात्राएं हैं और शेष छात्र हैं। कॉलेज में विद्यार्थियों की कुल संख्या 2800 है। 75% छात्र और 85% छात्राएं, अंतिम परीक्षा में उत्तीर्ण होते हैं। अंतिम परीक्षा में उत्तीर्ण कुल विद्यार्थियों का प्रतिशत ज्ञात करें।",
+    "english": "In a college, 35% are female and rest male. Total students 2800. If 75% male and 85% female pass final exam, find total pass %:",
+    "options": [
+      "(a) 80%",
+      "(b) 82%",
+      "(c) 78%",
+      "(d) 78.5%"
+    ],
+    "correctIndex": 3,
+    "explanation": "0.35 × 85 + 0.65 × 75 = 29.75 + 48.75 = 78.5%.",
+    "topic": "Exam & Pass/Fail"
+  },
+  {
+    "id": 54,
+    "questionNumber": 54,
+    "hindi": "आरंभ में सोहम का व्यय और बचत का अनुपात 5 : 1 था। उसके वेतन में 25% की वृद्धि होती है, जबकि उसकी बचत में 20% की वृद्धि होती है। यदि सोहम का वर्तमान व्यय ₹4,347 है, तो उसका प्रारंभिक वेतन क्या था?",
+    "english": "Initially ratio of Soham's expenditure to savings was 5 : 1. Salary increases by 25%, savings by 20%. If present expenditure is ₹4,347, find initial salary:",
+    "options": [
+      "(a) ₹4,130",
+      "(b) ₹4,140",
+      "(c) ₹4,150",
+      "(d) ₹4,160"
+    ],
+    "correctIndex": 1,
+    "explanation": "6.3x = 4347 => x = 690। प्रारंभिक वेतन = 6x = ₹4,140.",
+    "topic": "Income & Expenditure"
+  },
+  {
+    "id": 55,
+    "questionNumber": 55,
+    "hindi": "मनीषा की मासिक आय ₹1,20,000 था और उसका मासिक खर्च ₹55,000 था। अगले वर्ष, उसकी आय में 22% की वृद्धि हुई और उसके व्यय में 10% की वृद्धि हुई। उसकी बचत में प्रतिशत वृद्धि ज्ञात कीजिए (2 दशमलव स्थानों तक पूर्णांकित)।",
+    "english": "Manisha's monthly income was ₹1,20,000 and monthly expenses ₹55,000. Next year income increased by 22% and expenses by 10%. Find % increase in savings:",
+    "options": [
+      "(a) 28.16%",
+      "(b) 26.25%",
+      "(c) 32.15%",
+      "(d) 30.08%"
+    ],
+    "correctIndex": 2,
+    "explanation": "बचत वृद्धि = 26400 - 5500 = 20900। (20900 / 65000) × 100 = 32.15%.",
+    "topic": "Income & Expenditure"
+  },
+  {
+    "id": 56,
+    "questionNumber": 56,
+    "hindi": "एक व्यक्ति की मासिक आय ₹12,000 थी और उसका मासिक व्यय ₹10,000 था। अगले वर्ष, उसकी आय में 12% और उसके व्यय में 5% की वृद्धि हुई। उसकी बचत में हुई की गणना करें।",
+    "english": "A person's monthly income was ₹12,000 and expenditure ₹10,000. Next year income increased by 12% and expenditure by 5%. Find % increase in savings:",
+    "options": [
+      "(a) 48%",
+      "(b) 45%",
+      "(c) 47%",
+      "(d) 46%"
+    ],
+    "correctIndex": 2,
+    "explanation": "बचत वृद्धि = 1440 - 500 = 940। (940 / 2000) × 100 = 47%.",
+    "topic": "Income & Expenditure"
+  },
+  {
+    "id": 57,
+    "questionNumber": 57,
+    "hindi": "एक व्यक्ति अपनी आय का 28% बचाता है। यदि उसकी आय में 20% की वृद्धि होती है और व्यय में 5% की कमी होती है, तो उसकी बचत में x% की वृद्धि होती है। x का निकटतम मान ज्ञात करें।",
+    "english": "A person saves 28% of income. If income increases by 20% and expenditure decreases by 5%, savings increase by x%. Find x:",
+    "options": [
+      "(a) 72.5",
+      "(b) 84.3",
+      "(c) 45.8",
+      "(d) 54.4"
+    ],
+    "correctIndex": 1,
+    "explanation": "बचत वृद्धि = 20 + 3.6 = 23.6। x = (23.6 / 28) × 100 = 84.3%.",
+    "topic": "Income & Expenditure"
+  },
+  {
+    "id": 58,
+    "questionNumber": 58,
+    "hindi": "एक लड़की अपनी कमाई का 76% खर्च करती है। यदि उसकी कमाई में 18% की वृद्धि होती है और उसके खर्च में 25% की वृद्धि होती है, तो उसकी बचत में कितने प्रतिशत की वृद्धि या कमी (दशमलव के एक स्थान तक सही) होगी?",
+    "english": "A girl spends 76% of earnings. If earnings increase by 18% and expenses by 25%, find % change in savings:",
+    "options": [
+      "(a) 6.9%, decrease/6.9% कमी",
+      "(b) 4.2%, decrease/4.2% कमी",
+      "(c) 5.7%, increase/5.7% वृद्धि",
+      "(d) 8.4%, increase/8.4% वृद्धि"
+    ],
+    "correctIndex": 1,
+    "explanation": "परिवर्तन = 18 - 19 = -1। (1 / 24) × 100 = 4.166% ≈ 4.2% कमी।",
+    "topic": "Income & Expenditure"
+  },
+  {
+    "id": 59,
+    "questionNumber": 59,
+    "hindi": "रिया, अपनी आय का 66 2/3% भाग खर्च करती है। यदि उसकी आय में 16% की वृद्धि होती है और बचत में 17% की वृद्धि होती है, तो उसकी खर्च में हुई वृद्धि ज्ञात करें।",
+    "english": "Riya spends 66 2/3% of income. If income increases by 16% and savings by 17%, find % increase in expenditure:",
+    "options": [
+      "(a) 33%",
+      "(b) 12.8%",
+      "(c) 16.2%",
+      "(d) 15.5%"
+    ],
+    "correctIndex": 3,
+    "explanation": "3 × 16 - 1 × 17 = 31। खर्च वृद्धि = 31 / 2 = 15.5%.",
+    "topic": "Income & Expenditure"
+  },
+  {
+    "id": 60,
+    "questionNumber": 60,
+    "hindi": "एक व्यक्ति की बचत उसके व्यय के 20% के बराबर हैं यदि उसकी आय में 25% की वृद्धि होती है और व्यय में 18% की वृद्धि होती है, तो उसकी बचत में कितनी वृद्धि होगी?",
+    "english": "A person's savings equal 20% of expenditure. If income increases by 25% and expenditure by 18%, find % increase in savings:",
+    "options": [
+      "(a) 60%",
+      "(b) 50%",
+      "(c) 37.5%",
+      "(d) 7%"
+    ],
+    "correctIndex": 0,
+    "explanation": "बचत वृद्धि = 30 - 18 = 12। (12 / 20) × 100 = 60%.",
+    "topic": "Income & Expenditure"
+  },
+  {
+    "id": 61,
+    "questionNumber": 61,
+    "hindi": "एक परीक्षा में 80 प्रश्न है, जिसमें अनीता ने पहले 55 प्रश्नों में से 60% के सही उत्तर दिए। पूरी परीक्षा में 70% पाने के लिए, उसे शेष प्रश्नों में से कितने प्रतिशत प्रश्नों के सही उत्तर देने होंगे?",
+    "english": "In an exam of 80 questions, Anita answered 60% of first 55 correctly. What % of remaining must she answer correctly to score 70% overall?",
+    "options": [
+      "(a) 85%",
+      "(b) 92%",
+      "(c) 80%",
+      "(d) 78%"
+    ],
+    "correctIndex": 1,
+    "explanation": "शेष 25 में 23 सही चाहिए => (23 / 25) × 100 = 92%.",
+    "topic": "Exam & Pass/Fail"
+  },
+  {
+    "id": 62,
+    "questionNumber": 62,
+    "hindi": "A का वजन, B के वजन से 20% से अधिक है, जिसका वजन C के वजन से 30% अधिक है। A का वजन, C के वजन से कितना प्रतिशत अधिक है?",
+    "english": "Weight of A is 20% more than B, whose weight is 30% more than C. Weight of A is what % more than C?",
+    "options": [
+      "(a) 69",
+      "(b) 56",
+      "(c) 44",
+      "(d) 35.89"
+    ],
+    "correctIndex": 1,
+    "explanation": "C = 100, B = 130, A = 130 × 1.2 = 156 => 56% अधिक।",
+    "topic": "Percentage Comparison"
+  },
+  {
+    "id": 63,
+    "questionNumber": 63,
+    "hindi": "A, B से 25% अधिक है, और B, C से 40% कम है। यदि C, D से 20% अधिक है, तो A, D से कितना प्रतिशत कम है?",
+    "english": "A is 25% more than B, and B is 40% less than C. If C is 20% more than D, then A is what percent less than D?",
+    "options": [
+      "(a) 11%",
+      "(b) 10%",
+      "(c) 9%",
+      "(d) 12%"
+    ],
+    "correctIndex": 1,
+    "explanation": "D = 100, C = 120, B = 72, A = 90 => 10% कम।",
+    "topic": "Percentage Comparison"
+  },
+  {
+    "id": 64,
+    "questionNumber": 64,
+    "hindi": "A, B से 75% कम हैं। C, A व B के बीच के अंतर का 75% हैं। C, A से कितने प्रतिशत अधिक हैं?",
+    "english": "A is 75% less than B. C is 75% of difference between A and B. C is what percent more than A?",
+    "options": [
+      "(a) 125",
+      "(b) 100",
+      "(c) 75",
+      "(d) 90"
+    ],
+    "correctIndex": 0,
+    "explanation": "B = 100, A = 25, अंतर 75। C = 56.25। अधिक = (31.25/25) × 100 = 125%.",
+    "topic": "Percentage Comparison"
+  },
+  {
+    "id": 65,
+    "questionNumber": 65,
+    "hindi": "दो संख्याएं तीसरी संख्या से क्रमशः 25% और 65% अधिक हैं। उन दोनों संख्याओं का अनुपात क्या होगा?",
+    "english": "Two numbers are 25% and 65% more than a third number respectively. What is ratio of the two numbers?",
+    "options": [
+      "(a) 25 : 42",
+      "(b) 16 : 17",
+      "(c) 16 : 19",
+      "(d) 25 : 33"
+    ],
+    "correctIndex": 3,
+    "explanation": "125 : 165 = 25 : 33.",
+    "topic": "Ratio & Percentage"
+  },
+  {
+    "id": 66,
+    "questionNumber": 66,
+    "hindi": "दो संख्याएं, तीसरी संख्या से क्रमशः 25% और 60% अधिक है। इन दोनों संख्याओं का अनुपात क्या होगा?",
+    "english": "Two numbers are 25% and 60% more than a third number. What is ratio of the two numbers?",
+    "options": [
+      "(a) 20 : 30",
+      "(b) 20 : 35",
+      "(c) 25 : 32",
+      "(d) 21 : 31"
+    ],
+    "correctIndex": 2,
+    "explanation": "125 : 160 = 25 : 32.",
+    "topic": "Ratio & Percentage"
+  },
+  {
+    "id": 67,
+    "questionNumber": 67,
+    "hindi": "दो संख्याएं एक तीसरी संख्या से क्रमशः 37% और 30% कम हैं। दूसरी संख्या, पहली संख्या से कितने प्रतिशत अधिक है?",
+    "english": "Two numbers are 37% and 30% less than a third number. Second number is what % more than first?",
+    "options": [
+      "(a) 100/9 %",
+      "(b) 10/9 %",
+      "(c) 10%",
+      "(d) 100/3 %"
+    ],
+    "correctIndex": 0,
+    "explanation": "(7 / 63) × 100 = 100/9%.",
+    "topic": "Ratio & Percentage"
+  },
+  {
+    "id": 68,
+    "questionNumber": 68,
+    "hindi": "दो संख्याएँ A और B, तीसरी संख्या C से क्रमशः 80% और 20% अधिक हैं। A से B की संख्या का अनुपात है:",
+    "english": "Two numbers A and B are 80% and 20% more than C. Ratio of A to B is:",
+    "options": [
+      "(a) 5:4",
+      "(b) 4:5",
+      "(c) 3:2",
+      "(d) 3:4"
+    ],
+    "correctIndex": 2,
+    "explanation": "180 : 120 = 3 : 2.",
+    "topic": "Ratio & Percentage"
+  },
+  {
+    "id": 69,
+    "questionNumber": 69,
+    "hindi": "एक परीक्षा, जिसमें पूर्णांक 500 था, A को B की तुलना में 25% अधिक अंक प्राप्त हुए, B को C की तुलना में 60% अधिक अंक प्राप्त हुए और C को D की तुलना में 20% कम अंक प्राप्त हुए। यदि A को 80% अंक मिले हों, तो D को कितने प्रतिशत अंक मिले?",
+    "english": "In an exam of 500 marks, A got 25% more than B, B got 60% more than C, C got 20% less than D. If A got 80%, what % did D get?",
+    "options": [
+      "(a) 65%",
+      "(b) 60%",
+      "(c) 50%",
+      "(d) 54%"
+    ],
+    "correctIndex": 2,
+    "explanation": "A = 400, B = 320, C = 200, D = 250 => (250/500) × 100 = 50%.",
+    "topic": "Exam & Marks"
+  },
+  {
+    "id": 70,
+    "questionNumber": 70,
+    "hindi": "A, B से 20% कम है और C, D से 30% अधिक हैं यदि D, A से 25% कम है, तो निम्न में से कौन सा सही है?",
+    "english": "A is 20% less than B and C is 30% more than D. If D is 25% less than A, which of following is true?",
+    "options": [
+      "(a) B = 0.39C",
+      "(b) C = 0.78B",
+      "(c) B = 0.78C",
+      "(d) C = 0.39B"
+    ],
+    "correctIndex": 1,
+    "explanation": "D = 0.75 × 0.8B = 0.6B। C = 1.3 × 0.6B = 0.78B.",
+    "topic": "Algebraic Percentage"
+  },
+  {
+    "id": 71,
+    "questionNumber": 71,
+    "hindi": "A, B से 40% अधिक और B, C से 60% कम है। यदि C, D से 60% अधिक है, तो निम्नलिखित में से कौन सा विकल्प सही है?",
+    "english": "A is 40% more than B and B is 60% less than C. If C is 60% more than D, which option is correct?",
+    "options": [
+      "(a) D is 10.4% more than A / D, A से 10.4% अधिक है।",
+      "(b) A is 54% less than C / A, C से 54% कम है।",
+      "(c) B is 36% less than D / B, D से 36% कम है।",
+      "(d) C is 60% more than B / C, B से 60% अधिक है।"
+    ],
+    "correctIndex": 2,
+    "explanation": "D = 100, C = 160, B = 64, A = 89.6। B, D से (100 - 64) = 36% कम है।",
+    "topic": "Algebraic Percentage"
+  },
+  {
+    "id": 72,
+    "questionNumber": 72,
+    "hindi": "नमक की कीमत में 15% की कमी, एक व्यक्ति को ₹272 में 2 किग्रा अधिक नमक खरीदने में सक्षम बनाती है। नमक की घटी हुई कीमत प्रति किग्रा (₹ में) कितनी है?",
+    "english": "A reduction of 15% in price of salt enables a person to buy 2 kg more salt for ₹272. Find reduced price per kg (₹):",
+    "options": [
+      "(a) 20.40",
+      "(b) 22.16",
+      "(c) 24.25",
+      "(d) 25.00"
+    ],
+    "correctIndex": 0,
+    "explanation": "2 किग्रा की घटी कीमत = 272 का 15% = 40.80 => 1 किग्रा = ₹20.40.",
+    "topic": "Price Consumption & Quantity"
+  },
+  {
+    "id": 73,
+    "questionNumber": 73,
+    "hindi": "एक वस्तु की कीमत 20% कम हो जाती है। जिसके पहले, ग्राहक ₹360 में 2 किग्रा. अधिक वस्तु खरीद सकते है। वस्तु का प्रारंभिक मूल्य (₹ में) प्रति किग्रा. ज्ञात कीजिए।",
+    "english": "Price of article reduced by 20%, customer buys 2 kg more for ₹360. Find initial price per kg (₹):",
+    "options": [
+      "(a) 40",
+      "(b) 45",
+      "(c) 48",
+      "(d) 36"
+    ],
+    "correctIndex": 1,
+    "explanation": "घटा मूल्य = (360 × 0.20)/2 = 36। प्रारंभिक मूल्य = 36 / 0.80 = ₹45.",
+    "topic": "Price Consumption & Quantity"
+  },
+  {
+    "id": 74,
+    "questionNumber": 74,
+    "hindi": "केले के मूल्य में 20% की कमी होने पर ग्राहक ₹80 में 6 केले अधिक खरीद सकता है। केले के प्रति दर्जन मूल्य में हुई कमी (₹ में) ज्ञात कीजिए।",
+    "english": "Due to 20% reduction in price of bananas, a customer buys 6 more bananas for ₹80. Find reduction per dozen (₹):",
+    "options": [
+      "(a) 32",
+      "(b) 35",
+      "(c) 36",
+      "(d) 40"
+    ],
+    "correctIndex": 0,
+    "explanation": "6 केलों की घटी कीमत = 80 का 20% = 16 => प्रति दर्जन कमी = 16 × 2 = ₹32.",
+    "topic": "Price Consumption & Quantity"
+  },
+  {
+    "id": 75,
+    "questionNumber": 75,
+    "hindi": "गेहूं की कीमत में 15% की कमी एक गृहिणी को ₹2,720 में 6 किग्रा. अधिक गेहूं खरीदने में सक्षम बनाती है। गेहूं की प्रति किग्रा. घटी हुई कीमत (₹ में) कितनी है?",
+    "english": "A 15% reduction in wheat price enables buying 6 kg more for ₹2,720. Find reduced price per kg (₹):",
+    "options": [
+      "(a) 75",
+      "(b) 68",
+      "(c) 70",
+      "(d) 65"
+    ],
+    "correctIndex": 1,
+    "explanation": "घटी कीमत = (2720 × 0.15) / 6 = 408 / 6 = ₹68.",
+    "topic": "Price Consumption & Quantity"
+  },
+  {
+    "id": 76,
+    "questionNumber": 76,
+    "hindi": "चावल का मूल्य 25 प्रतिशत कम हो जाता है, इसलिए एक व्यक्ति उतने ही खर्च में 30 किग्रा. अधिक चावल खरीद पाता है। यदि खर्च ₹5400 है, तो चावल का प्रति किग्रा. वास्तविक मूल्य क्या था?",
+    "english": "Price of rice decreased by 25%, person buys 30 kg more for ₹5400. Find original price per kg:",
+    "options": [
+      "(a) ₹90 per kg",
+      "(b) ₹60 per kg",
+      "(c) ₹75 per kg",
+      "(d) ₹50 per kg"
+    ],
+    "correctIndex": 1,
+    "explanation": "घटा मूल्य = (5400 × 0.25)/30 = 45। वास्तविक मूल्य = 45 / 0.75 = ₹60 per kg.",
+    "topic": "Price Consumption & Quantity"
+  },
+  {
+    "id": 77,
+    "questionNumber": 77,
+    "hindi": "भानु अपने मासिक वेतन का 20% किराए पर, 10% स्टेशनरी पर, 14% यातायात पर, 18% बिजली पर और बचे हुए ₹1,520 अन्य वस्तुओं पर व्यय करता है। भानु का मासिक वेतन कितना है?",
+    "english": "Bhanu spends 20% on rent, 10% on stationery, 14% on transport, 18% on electricity, and remaining ₹1,520 on other items. Find monthly salary:",
+    "options": [
+      "(a) ₹10,000",
+      "(b) ₹6,000",
+      "(c) ₹4,000",
+      "(d) ₹2,000"
+    ],
+    "correctIndex": 2,
+    "explanation": "शेष = 100 - 62 = 38% = 1520 => कुल वेतन = (1520/38) × 100 = ₹4,000.",
+    "topic": "Salary & Expenditure"
+  },
+  {
+    "id": 78,
+    "questionNumber": 78,
+    "hindi": "P अपनी आय का 16% किराए पर, 18% किराने के समान पर, 12% बच्चों की शिक्षा और शेष का 45% अन्य मदों पर खर्च करता है। यदि वह ₹13,365 की राशि की बचत करता है, तो वह किराने के सामान पर कितना (₹ में) खर्च करता है?",
+    "english": "P spends 16% on rent, 18% on groceries, 12% on education, and 45% of remainder on others. If he saves ₹13,365, how much does he spend on groceries?",
+    "options": [
+      "(a) 8,100",
+      "(b) 7,500",
+      "(c) 9,000",
+      "(d) 8,700"
+    ],
+    "correctIndex": 0,
+    "explanation": "बचत = 54% × 0.55 = 29.7% = 13365 => 1% = 450। किराने पर = 18 × 450 = ₹8,100.",
+    "topic": "Salary & Expenditure"
+  },
+  {
+    "id": 79,
+    "questionNumber": 79,
+    "hindi": "एक व्यक्ति अपनी आय का 15% घर के किराए पर और शेष राशि का 60% घरेलू खर्चों पर व्यय करता है। यदि वह 25,500 रु० की बचत करता है, तो उसकी कुल आय की गणना करें। (रु० में, निकटतम दहाई तक पूर्णांकित)",
+    "english": "A person spends 15% on rent and 60% of remainder on domestic expenses. If savings is ₹25,500, find total income (approx to nearest tens):",
+    "options": [
+      "(a) 154410",
+      "(b) 145400",
+      "(c) 154540",
+      "(d) 154420"
+    ],
+    "correctIndex": 2,
+    "explanation": "बचत = 25500 / 0.165 ≈ 1,54,540.",
+    "topic": "Salary & Expenditure"
+  },
+  {
+    "id": 80,
+    "questionNumber": 80,
+    "hindi": "एक स्कूल में, 4% छात्र वार्षिक परीक्षा के लिये उपस्थित नहीं हुए। परीक्षा में शामिल होने वाले 10% छात्र परीक्षा में उत्तीर्ण नहीं हो सके। शेष छात्रों में से, 50% ने डिस्टंक्शन के अंक प्राप्त किये और 432 छात्रों ने परीक्षा उत्तीर्ण की, लेकिन उन्हें डिस्टंक्शन अंक नहीं मिले। स्कूल में छात्रों की कुल संख्या है?",
+    "english": "In a school, 4% absent. 10% failed. Of remainder, 50% got distinction and 432 passed without distinction. Find total students:",
+    "options": [
+      "(a) 878",
+      "(b) 1200",
+      "(c) 1000",
+      "(d) 960"
+    ],
+    "correctIndex": 2,
+    "explanation": "96% × 90% × 50% = 43.2% = 432 => कुल = 1000.",
+    "topic": "Exam & Students"
+  },
+  {
+    "id": 81,
+    "questionNumber": 81,
+    "hindi": "रमेश अपनी मासिक आय का 40% खाद्य पर, 18% मकान के किराये पर, 12% मनोरंजन पर और 5% वाहन पर खर्च करता है। लेकिन एक पारिवारिक समारोह के कारण, उसे ₹20,000 के खर्च को पूरा करने के लिए किसी ऋणदाता से ₹16,000 उधार लेना पड़ता है। उसका मासिक वेतन ज्ञात करें।",
+    "english": "Ramesh spends 40% on food, 18% on rent, 12% on entertainment, 5% on vehicle. Needs ₹20000 for function, borrows ₹16000. Find monthly salary:",
+    "options": [
+      "(a) ₹18,000",
+      "(b) ₹16,500",
+      "(c) ₹16,000",
+      "(d) ₹15,000"
+    ],
+    "correctIndex": 2,
+    "explanation": "बचत = 25% = 20000 - 16000 = 4000 => कुल वेतन = ₹16,000.",
+    "topic": "Salary & Expenditure"
+  },
+  {
+    "id": 82,
+    "questionNumber": 82,
+    "hindi": "रीता अपनी मासिक आय का 25% घर के किराये पर तथा शेष राशि का 30% भोजन पर व्यय करती है। यदि वह ₹5,250 बचाती है, तो उसकी मासिक आय कितनी है?",
+    "english": "Rita spends 25% on rent and 30% of remaining on food. If she saves ₹5,250, find monthly income:",
+    "options": [
+      "(a) ₹14,000",
+      "(b) ₹10,000",
+      "(c) ₹12,000",
+      "(d) ₹16,000"
+    ],
+    "correctIndex": 1,
+    "explanation": "बचत = 75% × 70% = 52.5% = 5250 => आय = ₹10,000.",
+    "topic": "Salary & Expenditure"
+  },
+  {
+    "id": 83,
+    "questionNumber": 83,
+    "hindi": "सविता, अपनी मासिक आय का 20% किराने के सामान पर, शेष आय का 15% किराए पर और बाकी बचे हुए का 60% बच्चों की शिक्षा और अन्य पर खर्च करती है। यदि वह महीने में ₹9,792 बचाती है, तो वह किराए पर, कितना (₹ में) खर्च करती है?",
+    "english": "Savita spends 20% on grocery, 15% of remainder on rent, 60% of remainder on education. If she saves ₹9,792, how much does she spend on rent?",
+    "options": [
+      "(a) 3,960",
+      "(b) 4,450",
+      "(c) 4,200",
+      "(d) 4,320"
+    ],
+    "correctIndex": 3,
+    "explanation": "बचत = 27.2% = 9792 => किराया (12%) = 12 × 360 = ₹4,320.",
+    "topic": "Salary & Expenditure"
+  },
+  {
+    "id": 84,
+    "questionNumber": 84,
+    "hindi": "एक शहर की जनसंख्या पहले वर्ष में 30% बढ़ी और अगले वर्ष 15% कम हो गई। यदि वर्तमान जनसंख्या 11,050 है तो 2 वर्ष पहले की जनसंख्या कितनी थी?",
+    "english": "Population of a city increased by 30% in first year and decreased by 15% in next year. If present population is 11,050, what was it 2 years ago?",
+    "options": [
+      "(a) 10,000",
+      "(b) 99,500",
+      "(c) 99,000",
+      "(d) 10,050"
+    ],
+    "correctIndex": 0,
+    "explanation": "P × 1.30 × 0.85 = 11050 => P = 10,000.",
+    "topic": "Population & Growth"
+  },
+  {
+    "id": 85,
+    "questionNumber": 85,
+    "hindi": "एक शहर की जनसंख्या 10% की वार्षिक दर से बढ़ती है। यदि 2018 में शहर की जनसंख्या 2 करोड़ थी, तो वर्ष 2021 में शहर की जनसंख्या कितनी थी?",
+    "english": "Population grows at 10% per annum. If in 2018 it was 2 crore, what was population in 2021?",
+    "options": [
+      "(a) 2.3 crore/करोड़",
+      "(b) 2.6 crore/करोड़",
+      "(c) 2.662 crore/करोड़",
+      "(d) 2.42 crore/करोड़"
+    ],
+    "correctIndex": 2,
+    "explanation": "2 × (1.1)³ = 2.662 करोड़.",
+    "topic": "Population & Growth"
+  },
+  {
+    "id": 86,
+    "questionNumber": 86,
+    "hindi": "एक कस्बे की जनसंख्या 80,000 है। पहले वर्ष में इसमें 8% की कमी होती है और दूसरे वर्ष में 5% की वृद्धि होती है। दूसरे वर्ष के अंत में कस्बे की जनसंख्या कितनी होगी?",
+    "english": "Population of a town is 80,000. In 1st year decreased by 8%, in 2nd year increased by 5%. Population at end of 2nd year:",
+    "options": [
+      "(a) 76150",
+      "(b) 86140",
+      "(c) 77280",
+      "(d) 82540"
+    ],
+    "correctIndex": 2,
+    "explanation": "80000 × 0.92 × 1.05 = 77,280.",
+    "topic": "Population & Growth"
+  },
+  {
+    "id": 87,
+    "questionNumber": 87,
+    "hindi": "एक देश की जनसंख्या 4% प्रति दशक की दर से बढ़ रही है। यदि 2030 में देश की अनुमानित जनसंख्या 1,58,18,400 है, तो 2000 में उस देश की जनसंख्या कितनी थी?",
+    "english": "Population grows 4% per decade. In 2030 estimated population is 1,58,18,400. Population in 2000 was:",
+    "options": [
+      "(a) 1,40,62,000",
+      "(b) 1,40,65,200",
+      "(c) 1,40,56,200",
+      "(d) 1,40,62,500"
+    ],
+    "correctIndex": 3,
+    "explanation": "P × (1.04)³ = 15818400 => P = 1,40,62,500.",
+    "topic": "Population & Growth"
+  },
+  {
+    "id": 88,
+    "questionNumber": 88,
+    "hindi": "दो वर्ष पहले एक गांव की जनसंख्या 1,000 थी। पहले वर्ष में जनसंख्या में 10% की वृद्धि हुई और दूसरे वर्ष में 10% की कमी हुई। वर्तमान जनसंख्या ज्ञात करें।",
+    "english": "Two years ago population was 1,000. In 1st year increased by 10%, in 2nd year decreased by 10%. Find present population:",
+    "options": [
+      "(a) 985",
+      "(b) 980",
+      "(c) 990",
+      "(d) 995"
+    ],
+    "correctIndex": 2,
+    "explanation": "1000 × 1.10 × 0.90 = 990.",
+    "topic": "Population & Growth"
+  },
+  {
+    "id": 89,
+    "questionNumber": 89,
+    "hindi": "₹10,00,000 की लागत से निर्मित एक आवासीय फ्लैट का मूल्य 10% प्रति वर्ष की दर से मूल्यह्रासित हो रहा है। निर्माण के 3 वर्ष बाद इसका मूल्य क्या होगा?",
+    "english": "Flat built at cost ₹10,00,000 depreciates at 10% p.a. Value after 3 years:",
+    "options": [
+      "(a) ₹2,78,000",
+      "(b) ₹7,29,000",
+      "(c) ₹7,92,000",
+      "(d) ₹6,29,000"
+    ],
+    "correctIndex": 1,
+    "explanation": "10,00,000 × (0.9)³ = ₹7,29,000.",
+    "topic": "Depreciation"
+  },
+  {
+    "id": 90,
+    "questionNumber": 90,
+    "hindi": "किसी देश की जनसंख्या प्रत्येक दशक में 1% की दर से घट रही है। यदि 2030 में उस देश की अनुमानित जनसंख्या 1940598 दी गई हो, तो 2000 में देश की जनसंख्या कितनी थी?",
+    "english": "Population decreases 1% per decade. In 2030 it is 1940598. In 2000 it was:",
+    "options": [
+      "(a) 2000000",
+      "(b) 1999990",
+      "(c) 2000450",
+      "(d) 2000616"
+    ],
+    "correctIndex": 0,
+    "explanation": "P × (0.99)³ = 1940598 => P = 20,00,000.",
+    "topic": "Population & Growth"
+  },
+  {
+    "id": 91,
+    "questionNumber": 91,
+    "hindi": "गाँव की जनसंख्या में प्रति वर्ष 10% की दर से लगातार वृद्धि हो रही है। यदि इसकी वर्तमान जनसंख्या 54,450 है, तो दो वर्ष पूर्व यह कितनी थी?",
+    "english": "Population grows 10% per annum. If present population is 54,450, what was it 2 years ago?",
+    "options": [
+      "(a) 48000",
+      "(b) 45000",
+      "(c) 52000",
+      "(d) 50000"
+    ],
+    "correctIndex": 1,
+    "explanation": "P × 1.21 = 54450 => P = 45,000.",
+    "topic": "Population & Growth"
+  },
+  {
+    "id": 92,
+    "questionNumber": 92,
+    "hindi": "एक चुनाव में, उम्मीदवार X को कुल वैध मतों के 70% मत मिले। यदि कुल मतों के 20% मतों को अवैध घोषित कर दिया गया हो और मतों की कुल संख्या 640000 हो, तो इस उम्मीदवार के पक्ष में पड़े वैध मतों की गणना करें।",
+    "english": "In an election, candidate X got 70% of valid votes. If 20% invalid and total votes 640000, calculate valid votes for X:",
+    "options": [
+      "(a) 358400",
+      "(b) 450000",
+      "(c) 400000",
+      "(d) 358000"
+    ],
+    "correctIndex": 0,
+    "explanation": "640000 × 0.80 × 0.70 = 358,400.",
+    "topic": "Election & Voting"
+  },
+  {
+    "id": 93,
+    "questionNumber": 93,
+    "hindi": "दो उम्मीदवारों के बीच हुए एक चुनाव में, रवि को कुल वैध मतों के 65% मत प्राप्त हुए। यदि मतों की कुल संख्या 6000 थी और 25% मत अवैध थे, तो अन्य उम्मीदवार सुशील को कितने वैध मत प्राप्त हुए?",
+    "english": "In election between Ravi and Sushil, Ravi got 65% of valid votes. Total votes 6000, 25% invalid. Valid votes for Sushil:",
+    "options": [
+      "(a) 1775",
+      "(b) 1625",
+      "(c) 1575",
+      "(d) 1525"
+    ],
+    "correctIndex": 2,
+    "explanation": "6000 × 0.75 × 0.35 = 1575.",
+    "topic": "Election & Voting"
+  },
+  {
+    "id": 94,
+    "questionNumber": 94,
+    "hindi": "दो प्रत्याशियों के बीच हुए एक चुनाव में, पात्र मतदाताओं में से 80 प्रतिशत ने अपना वोट डाला, डाले गए 5% मतों को अवैध घोषित कर दिया गया। एक प्रत्याशी को 10545 मत मिले, जो कुल वैध मतों का 75% था। पात्र मतदाताओं की कुल संख्या ज्ञात करें।",
+    "english": "In election, 80% voted, 5% invalid. Candidate got 10545 votes (75% of valid). Find total eligible voters:",
+    "options": [
+      "(a) 17800",
+      "(b) 18500",
+      "(c) 18250",
+      "(d) 18000"
+    ],
+    "correctIndex": 1,
+    "explanation": "10545 / (0.75 × 0.95 × 0.80) = 18,500.",
+    "topic": "Election & Voting"
+  },
+  {
+    "id": 95,
+    "questionNumber": 95,
+    "hindi": "एक चुनाव में, विजयी उम्मीदवार को 15744 मत प्राप्त हुए, जो कुल मतों के 48% है। एकमात्र अन्य उम्मीदवार को 22% मत मिले। मतदान न करने वाले मतदाताओं की संख्या ज्ञात कीजिए।",
+    "english": "Winner got 15744 votes (48% of total). Other candidate got 22%. Find number of non-voters:",
+    "options": [
+      "(a) 9860",
+      "(b) 9870",
+      "(c) 9840",
+      "(d) 9850"
+    ],
+    "correctIndex": 2,
+    "explanation": "कुल मत = 32800। गैर-मतदाता = 30% = 9840.",
+    "topic": "Election & Voting"
+  },
+  {
+    "id": 96,
+    "questionNumber": 96,
+    "hindi": "दो उम्मीदवारों के बीच हुए एक चुनाव में 10% मतदाताओं ने अपना मत नहीं डाला और डाले गए मतों के 5% मत अवैध पाए गए। सफल उम्मीदवार को वैध मतों के 55% मत प्राप्त हुए और वह 1710 मतों से चुनाव जीत गया। गणना करें कि कुल कितने मतदाता नामांकित थे?",
+    "english": "In election, 10% didn't vote, 5% invalid. Winner got 55% of valid votes and won by 1710 votes. Find enrolled voters:",
+    "options": [
+      "(a) 20000",
+      "(b) 21000",
+      "(c) 19000",
+      "(d) 20500"
+    ],
+    "correctIndex": 0,
+    "explanation": "10% of valid = 1710 => valid = 17100 => enrolled = 17100 / (0.95 × 0.90) = 20,000.",
+    "topic": "Election & Voting"
+  },
+  {
+    "id": 97,
+    "questionNumber": 97,
+    "hindi": "दो उम्मीदवारों के बीच हुए एक चुनाव में एक उम्मीदवार को कुल वैध मतों के 60% मत प्राप्त हुए। 20% मत अवैध थे। यदि मतों की कुल संख्या 16250 थी, तो दूसरे उम्मीदवार को प्राप्त वैध मतों की संख्या ज्ञात कीजिए।",
+    "english": "One candidate got 60% of valid votes. 20% invalid. Total votes 16250. Valid votes for second candidate:",
+    "options": [
+      "(a) 2990",
+      "(b) 4760",
+      "(c) 5200",
+      "(d) 5800"
+    ],
+    "correctIndex": 2,
+    "explanation": "16250 × 0.80 × 0.40 = 5200.",
+    "topic": "Election & Voting"
+  },
+  {
+    "id": 98,
+    "questionNumber": 98,
+    "hindi": "एक चुनाव में तीन उम्मीदवार A, B और C थे। 10% पात्र मतदाताओं ने मतदान नहीं किया। मतदान करने वाले में से, 45% ने A को, 35% ने B को और शेष 20% ने C को मतदान किया। A को डाले गए मतों में से 30% और B को डाले गए मतों में से 20% मतों को बाद में अवैध माना गया, जबकि C को डाले गए सभी मतों को वैध माना गया। यदि A को B से 882 अधिक वैध मत प्राप्त हुए, तो C को कितने वैध मत प्राप्त हुए?",
+    "english": "3 candidates A, B, C. 10% didn't vote. Votes: A 45%, B 35%, C 20%. Invalid: A 30%, B 20%, C 0%. If A got 882 more valid votes than B, valid votes for C:",
+    "options": [
+      "(a) 5020",
+      "(b) 5040",
+      "(c) 5050",
+      "(d) 5060"
+    ],
+    "correctIndex": 1,
+    "explanation": "3.5x = 882 => x = 252 => C = 20 × 252 = 5040.",
+    "topic": "Election & Voting"
+  },
+  {
+    "id": 99,
+    "questionNumber": 99,
+    "hindi": "दो उम्मीदवारों के बीच एक चुनाव में, उम्मीदवारों में से एक ने 35% मत हासिल किए और दूसरे उम्मीदवार से 1296 मतों से हार गया। यदि एक भी वोट अवैध नहीं था, तो डाले गए वोटों की कुल संख्या ज्ञात कीजिए।",
+    "english": "In election, one got 35% and lost by 1296 votes. No invalid votes. Total votes polled:",
+    "options": [
+      "(a) 4546",
+      "(b) 4230",
+      "(c) 4456",
+      "(d) 4320"
+    ],
+    "correctIndex": 3,
+    "explanation": "30% = 1296 => कुल = (1296 / 30) × 100 = 4320.",
+    "topic": "Election & Voting"
+  },
+  {
+    "id": 100,
+    "questionNumber": 100,
+    "hindi": "दो उम्मीदवारों के बीच हुए एक चुनाव में, 15% मतदाताओं ने अपना मत नहीं डाला और डाले गए मतों में 10% मत अवैध पाए गए। सफल उम्मीदवार को वैध मतों के 55% मत प्राप्त हुए और वह 6120 मतों के बहुमत से जीता। मतदाता सूची में नामांकित मतदाताओं की संख्या कितनी थी?",
+    "english": "15% didn't vote, 10% invalid. Winner got 55% of valid and won by 6120. Enrolled voters:",
+    "options": [
+      "(a) 70000",
+      "(b) 80000",
+      "(c) 72000",
+      "(d) 75000"
+    ],
+    "correctIndex": 1,
+    "explanation": "10% of valid = 6120 => valid = 61200 => enrolled = 61200 / (0.90 × 0.85) = 80,000.",
+    "topic": "Election & Voting"
+  },
+  {
+    "id": 101,
+    "questionNumber": 101,
+    "hindi": "राम और श्यामल के बीच एक चुनाव में, एक को कुल मतों का 30% प्राप्त हुआ और इस प्रकार वह 900 मतों से हार गया। यदि 90% मतदाताओं ने मतदान किया और कोई अमान्य या अवैध मत नहीं डाला गया, तो मतदान सूची में मतदाताओं की संख्या कितनी थी?",
+    "english": "In election between Ram and Shyamal, one got 30% and lost by 900. 90% voted, no invalid. Voters in list:",
+    "options": [
+      "(a) 2800",
+      "(b) 2500",
+      "(c) 2700",
+      "(d) 2300"
+    ],
+    "correctIndex": 1,
+    "explanation": "नामांकित मतदाता = 2500.",
+    "topic": "Election & Voting"
+  },
+  {
+    "id": 102,
+    "questionNumber": 102,
+    "hindi": "दो उम्मीदवारों के बीच हुए एक चुनाव में, एक उम्मीदवार को कुल वैध मतों के 40% मत प्राप्त हुए और 30% मत अवैध थे। यदि मतों की कुल संख्या 7500 थी, तो दूसरे उम्मीदवार को कितने वैध मत प्राप्त हुए?",
+    "english": "One candidate got 40% of valid votes, 30% invalid. Total votes 7500. Valid votes for second candidate:",
+    "options": [
+      "(a) 1540",
+      "(b) 3250",
+      "(c) 2350",
+      "(d) 3150"
+    ],
+    "correctIndex": 3,
+    "explanation": "7500 × 0.70 × 0.60 = 3150.",
+    "topic": "Election & Voting"
+  },
+  {
+    "id": 103,
+    "questionNumber": 103,
+    "hindi": "2 उम्मीदवारों द्वारा लड़े गए चुनाव में, एक उम्मीदवार को कुल मतों के 20% मत प्राप्त हुए, फिर भी वह 600 मतों से हार गया। चुनाव में पड़े कुल मतों की संख्या कितनी है? (यह मानते हुए कि सभी वोट वैध है)",
+    "english": "In election, one got 20% and lost by 600 votes. Total votes polled:",
+    "options": [
+      "(a) 900",
+      "(b) 700",
+      "(c) 800",
+      "(d) 1000"
+    ],
+    "correctIndex": 3,
+    "explanation": "60% = 600 => कुल = 1000.",
+    "topic": "Election & Voting"
+  },
+  {
+    "id": 104,
+    "questionNumber": 104,
+    "hindi": "दो उम्मीदवारों के बीच हुए एक चुनाव में 72% मत प्राप्त करने वाला उम्मीदवार 572 मतों के बहुमत से निर्वाचित होता है। सभी मतों को वैध मानते हुए, डाले गए मतों की कुल संख्या ज्ञात कीजिए।",
+    "english": "Candidate getting 72% elected by majority of 572 votes. Total votes polled:",
+    "options": [
+      "(a) 1100",
+      "(b) 900",
+      "(c) 1500",
+      "(d) 1300"
+    ],
+    "correctIndex": 3,
+    "explanation": "44% = 572 => कुल = 1300.",
+    "topic": "Election & Voting"
+  },
+  {
+    "id": 105,
+    "questionNumber": 105,
+    "hindi": "दो उम्मीदवारों के बीच हुए एक विधानसभा चुनाव में, विजेता को कुल वैध मतों के 56% मत प्राप्त हुए। कुल मतों के 5% मत अवैध घोषित किए गए। यदि मतदाताओं की कुल संख्या 3,20,000 है, तो जीतने वाले उम्मीदवार के लिए डाले गए वैध मतों की संख्या ज्ञात करें।",
+    "english": "Winner got 56% of valid votes. 5% invalid. Total voters 3,20,000. Valid votes for winner:",
+    "options": [
+      "(a) 174020",
+      "(b) 175240",
+      "(c) 170420",
+      "(d) 170240"
+    ],
+    "correctIndex": 3,
+    "explanation": "320000 × 0.95 × 0.56 = 170,240.",
+    "topic": "Election & Voting"
+  },
+  {
+    "id": 106,
+    "questionNumber": 106,
+    "hindi": "दो प्रत्याशियों के बीच एक चुनाव में, 25% मत अमान्य थे और एक प्रत्याशी को कुल मान्य मतों में से 45% मत प्राप्त हुए। यदि मतों की कुल संख्या 16,00,000 थी, तो विजेता प्रत्याशी को प्राप्त मान्य मतों की संख्या क्या थी?",
+    "english": "25% invalid, one got 45% of valid. Total votes 16,00,000. Valid votes for winner:",
+    "options": [
+      "(a) 7,00,000",
+      "(b) 6,60,000",
+      "(c) 6,50,000",
+      "(d) 7,10,000"
+    ],
+    "correctIndex": 1,
+    "explanation": "1600000 × 0.75 × 0.55 = 6,60,000.",
+    "topic": "Election & Voting"
+  },
+  {
+    "id": 107,
+    "questionNumber": 107,
+    "hindi": "एक निगम चुनाव में मेयर पद के लिए दो उम्मीदवारों ने चुनाव में भाग लिया। एक उम्मीदवार को 40% मान्य मत प्राप्त हुए। 23% मत अमान्य थे। यदि कुल मतों की संख्या 21,000 थी तो दूसरे उम्मीदवार को मिले मान्य मतों की संख्या क्या थी?",
+    "english": "One got 40% of valid votes. 23% invalid. Total votes 21,000. Valid votes for other candidate:",
+    "options": [
+      "(a) 9702",
+      "(b) 9817",
+      "(c) 9901",
+      "(d) 9716"
+    ],
+    "correctIndex": 0,
+    "explanation": "21000 × 0.77 × 0.60 = 9702.",
+    "topic": "Election & Voting"
+  },
+  {
+    "id": 108,
+    "questionNumber": 108,
+    "hindi": "एक चुनाव में दो उम्मीदवार थे। एक उम्मीदवार को 38% मत मिले और वह 7200 मतों से हार गया। वैध मतों की कुल संख्या _____ है।",
+    "english": "Candidate got 38% and lost by 7200 votes. Total valid votes:",
+    "options": [
+      "(a) 27360",
+      "(b) 30000",
+      "(c) 273600",
+      "(d) 3600"
+    ],
+    "correctIndex": 1,
+    "explanation": "24% = 7200 => कुल वैध = 30,000.",
+    "topic": "Election & Voting"
+  },
+  {
+    "id": 109,
+    "questionNumber": 109,
+    "hindi": "एक पंचायत चुनाव में एक उम्मीदवार A को 30% मत मिले और वह 6 मतों से अर्हता प्राप्त नहीं कर सका। एक अन्य उम्मीदवार B ने 40% मत प्राप्त किए और अर्हता प्राप्त करने के लिए आवश्यक न्यूनतम मतों से 6 मत अधिक प्राप्त किए। अधिकतम मत _____ हैं।",
+    "english": "A got 30% and failed by 6 votes. B got 40% and got 6 votes more than pass marks. Maximum votes:",
+    "options": [
+      "(a) 140",
+      "(b) 160",
+      "(c) 100",
+      "(d) 120"
+    ],
+    "correctIndex": 3,
+    "explanation": "10% = 12 => अधिकतम मत = 120.",
+    "topic": "Election & Voting"
+  },
+  {
+    "id": 110,
+    "questionNumber": 110,
+    "hindi": "चमनलाल, अरशद और जगजीत सिंह ने कोई चुनाव लड़ा था। मतदान के सभी वोट वैध थे। अरशद को कुल वोटों के 35% वोट मिले थे। चमनलाल को प्रत्येक 35 वोट में से 14 वोट मिले थे। विजेता को सबसे कम वोट पाने वाले व्यक्ति की तुलना में 4950 वोट अधिक मिले थे। मतदान हुए सभी वोटों की कुल संख्या ज्ञात करें।",
+    "english": "Arshad got 35%. Chamanlal got 14 out of every 35. Winner got 4950 votes more than least. Total votes:",
+    "options": [
+      "(a) 13378",
+      "(b) 38000",
+      "(c) 99000",
+      "(d) 33000"
+    ],
+    "correctIndex": 3,
+    "explanation": "चमनलाल = 40%, अरशद = 35%, जगजीत = 25%। 15% = 4950 => कुल = 33,000.",
+    "topic": "Election & Voting"
+  },
+  {
+    "id": 111,
+    "questionNumber": 111,
+    "hindi": "दो उम्मीदवारों के बीच एक चुनाव में, पंजीकृत मतदाताओं में से 5% ने अपना वोट नहीं डाला। 10% वोट या तो अमान्य या NOTA के पाए गए। जीतने वाले उम्मीदवार ने अपने पक्ष में 60% वोट प्राप्त किए और 17271 वोटों से जीत हासिल की। पंजीकृत मतदाताओं की संख्या ज्ञात कीजिए।",
+    "english": "5% didn't vote, 10% invalid/NOTA. Winner got 60% and won by 17271 votes. Registered voters:",
+    "options": [
+      "(a) 90252",
+      "(b) 100000",
+      "(c) 101000",
+      "(d) 102500"
+    ],
+    "correctIndex": 2,
+    "explanation": "17.1% = 17271 => पंजीकृत = 101,000.",
+    "topic": "Election & Voting"
+  },
+  {
+    "id": 112,
+    "questionNumber": 112,
+    "hindi": "A की आय B की तुलना में 60% कम है, और A का व्यय B के व्यय के 60% के बराबर है। यदि A की आय, B के व्यय के 70% के बराबर है, तो A और B की बचत का अनुपात क्या है?",
+    "english": "Income of A is 60% less than B, expenditure of A equals 60% of B's expenditure. If A's income is 70% of B's expenditure, find ratio of savings of A to B:",
+    "options": [
+      "(a) 3:8",
+      "(b) 5:9",
+      "(c) 4:7",
+      "(d) 2:15"
+    ],
+    "correctIndex": 3,
+    "explanation": "A बचत = 10, B बचत = 75 => 10 : 75 = 2 : 15.",
+    "topic": "Ratio & Income"
+  },
+  {
+    "id": 113,
+    "questionNumber": 113,
+    "hindi": "A और B अपनी आय का क्रमशः 60% और 75% खर्च करते हैं। यदि A की बचत, B की बचत की तुलना में 20% अधिक है, तो A की आय B की आय से कितने प्रतिशत कम हैं?",
+    "english": "A and B spend 60% and 75% of income. If A's savings is 20% more than B's, A's income is what % less than B's?",
+    "options": [
+      "(a) 15",
+      "(b) 20",
+      "(c) 10",
+      "(d) 25"
+    ],
+    "correctIndex": 3,
+    "explanation": "0.40 A = 1.20 × 0.25 B => A/B = 3/4 => 25% कम।",
+    "topic": "Ratio & Income"
+  },
+  {
+    "id": 114,
+    "questionNumber": 114,
+    "hindi": "यदि किसी संख्या में 85% को 75 में जोड़ा जाता है तो परिणाम वही संख्या हैं। वह संख्या हैं:",
+    "english": "If 85% of a number is added to 75, result is number itself. The number is:",
+    "options": [
+      "(a) 500",
+      "(b) 200",
+      "(c) 300",
+      "(d) 100"
+    ],
+    "correctIndex": 0,
+    "explanation": "15% = 75 => संख्या = 500.",
+    "topic": "Numbers"
+  },
+  {
+    "id": 115,
+    "questionNumber": 115,
+    "hindi": "यदि किसी संख्या के 62% और 80% के बीच का अंतर 198 है, तो उस संख्या के 92% और 56% के बीच का अंतर ज्ञात कीजिए।",
+    "english": "Difference between 62% and 80% of a number is 198. Difference between 92% and 56% is:",
+    "options": [
+      "(a) 1100",
+      "(b) 3564",
+      "(c) 396",
+      "(d) 360"
+    ],
+    "correctIndex": 2,
+    "explanation": "18% = 198 => 1% = 11 => 36% = 396.",
+    "topic": "Numbers"
+  },
+  {
+    "id": 116,
+    "questionNumber": 116,
+    "hindi": "रवि परीक्षाओं में 72% अंक प्राप्त करता हैं। अगर वे 360 अंक हैं, तो अधिकतम अंक कितने हैं?",
+    "english": "Ravi secures 72% marks. If these are 360 marks, maximum marks are:",
+    "options": [
+      "(a) 450",
+      "(b) 400",
+      "(c) 500",
+      "(d) 350"
+    ],
+    "correctIndex": 2,
+    "explanation": "72% = 360 => 100% = 500.",
+    "topic": "Exam & Marks"
+  },
+  {
+    "id": 117,
+    "questionNumber": 117,
+    "hindi": "A, B और C किसी निश्चित राशि को आपस में वितरित करते हैं। उनके पास की राशियों का औसत ₹4520 है। A का हिस्सा, B के हिस्से से 10 2/3% अधिक है और C के हिस्से से 33 1/3% कम है। B का हिस्सा (₹ में) ज्ञात करें।",
+    "english": "A, B, C share an amount, average ₹4520. A's share is 10 2/3% more than B and 33 1/3% less than C. B's share (₹):",
+    "options": [
+      "(a) 3500",
+      "(b) 5976",
+      "(c) 3600",
+      "(d) 3984"
+    ],
+    "correctIndex": 2,
+    "explanation": "B का हिस्सा = ₹3600.",
+    "topic": "Ratio & Division"
+  },
+  {
+    "id": 118,
+    "questionNumber": 118,
+    "hindi": "किसी गांव की वर्तमान जनसंख्या 15280 हैं। यदि पुरुषों की संख्या में 25% की वृद्धि होती है और महिलाओं की संख्या में 15% की वृद्धि होती है, तो जनसंख्या 18428 हो जाएगी। गांव में पुरुषों और महिलाओं की वर्तमान जनसंख्या के बीच का अंतर ज्ञात करें।",
+    "english": "Population 15280. Males increase 25%, females 15%, total becomes 18428. Difference between present male and female population:",
+    "options": [
+      "(a) 1840",
+      "(b) 1380",
+      "(c) 920",
+      "(d) 2760"
+    ],
+    "correctIndex": 0,
+    "explanation": "पुरुष 8560, महिलाएं 6720 => अंतर = 1840.",
+    "topic": "Population & Alligation"
+  },
+  {
+    "id": 119,
+    "questionNumber": 119,
+    "hindi": "तीन व्यक्ति A, B और C अपने मासिक वेतन का क्रमशः 10%, 7% और 9% भाग एक धर्मार्थ ट्रस्ट को दान करते हैं। A और B का मासिक वेतन बराबर है और A और B के दान के बीच अंतर ₹900 है। यदि C की तुलना में A और B द्वारा किया गया कुल दान ₹600 अधिक है, तो C का मासिक वेतन (₹ में) ज्ञात करें।",
+    "english": "A, B, C donate 10%, 7%, 9% to trust. A and B salary equal, donation diff ₹900. Total donation of A+B is ₹600 more than C. Find C's salary:",
+    "options": [
+      "(a) 60000",
+      "(b) 50000",
+      "(c) 45000",
+      "(d) 55000"
+    ],
+    "correctIndex": 1,
+    "explanation": "C का वेतन = ₹50,000.",
+    "topic": "Salary & Donation"
+  },
+  {
+    "id": 120,
+    "questionNumber": 120,
+    "hindi": "एक परीक्षा में, 54% उम्मीदवार विज्ञान में उत्तीर्ण हुए और 42% गणित में अनुत्तीर्ण हुए और 32% दोनों विषयों में अनुत्तीर्ण हुए, तो दोनों विषयों में कितने प्रतिशत छात्र उत्तीर्ण हुए?",
+    "english": "54% passed science, 42% failed math, 32% failed both. What percent passed both subjects?",
+    "options": [
+      "(a) 32%",
+      "(b) 56%",
+      "(c) 44%",
+      "(d) 48%"
+    ],
+    "correctIndex": 2,
+    "explanation": "कम से कम एक में फेल = 46 + 42 - 32 = 56% => दोनों में पास = 44%.",
+    "topic": "Venn Diagram & Sets"
+  },
+  {
+    "id": 121,
+    "questionNumber": 121,
+    "hindi": "एक परीक्षा में 53% उम्मीदवार विज्ञान में और 48% गणित में असफल रहे। यदि दोनों विषयों में 40% फेल हुए, तो दोनों विषयों में कितने प्रतिशत उत्तीर्ण हुए?",
+    "english": "53% failed science, 48% failed math, 40% failed both. What percent passed both subjects?",
+    "options": [
+      "(a) 51%",
+      "(b) 39%",
+      "(c) 49%",
+      "(d) 43%"
+    ],
+    "correctIndex": 1,
+    "explanation": "फेल = 53 + 48 - 40 = 61% => पास = 39%.",
+    "topic": "Venn Diagram & Sets"
+  },
+  {
+    "id": 122,
+    "questionNumber": 122,
+    "hindi": "एक संख्या जो, 16% बढ़ने पर 1914 हो जाती हैं यह संख्या है:",
+    "english": "A number which when increased by 16% becomes 1914. The number is:",
+    "options": [
+      "(a) 2220",
+      "(b) 1650",
+      "(c) 1780",
+      "(d) 2010"
+    ],
+    "correctIndex": 1,
+    "explanation": "1914 / 1.16 = 1650.",
+    "topic": "Numbers"
+  },
+  {
+    "id": 123,
+    "questionNumber": 123,
+    "hindi": "निधि ने गणित में 62 अंग्रेजी में 70 विज्ञान में 74 अंक प्राप्त किए। सामाजिक विज्ञान में उसका स्कोर क्या होना चाहिए ताकि उसे कुल 68% प्राप्त हों?",
+    "english": "Nidhi scored 62 in math, 70 in English, 74 in science. What score needed in social science to get 68% overall?",
+    "options": [
+      "(a) 65",
+      "(b) 68",
+      "(c) 67",
+      "(d) 66"
+    ],
+    "correctIndex": 3,
+    "explanation": "4 × 68 - (62 + 70 + 74) = 272 - 206 = 66.",
+    "topic": "Exam & Average"
+  },
+  {
+    "id": 124,
+    "questionNumber": 124,
+    "hindi": "9/40 प्रतिशत में परिवर्तित है:",
+    "english": "9/40 converted to percentage is:",
+    "options": [
+      "(a) 2 1/2",
+      "(b) 2",
+      "(c) 22",
+      "(d) 22 1/2"
+    ],
+    "correctIndex": 3,
+    "explanation": "(9 / 40) × 100 = 22.5% = 22 1/2%.",
+    "topic": "Fraction to Percentage"
+  },
+  {
+    "id": 125,
+    "questionNumber": 125,
+    "hindi": "₹124 का कितना प्रतिशत ₹49.60 है?",
+    "english": "What percentage of ₹124 is ₹49.60?",
+    "options": [
+      "(a) 250",
+      "(b) 16",
+      "(c) 123",
+      "(d) 40"
+    ],
+    "correctIndex": 3,
+    "explanation": "(49.60 / 124) × 100 = 40%.",
+    "topic": "Basic Percentage"
+  },
+  {
+    "id": 126,
+    "questionNumber": 126,
+    "hindi": "ताजे फल में 68% पानी और सूखे फल में 20% पानी होता है। 100 किलोग्राम ताजे फल से कितना सूखा फल प्राप्त किया जा सकता है?",
+    "english": "Fresh fruit contains 68% water and dry fruit contains 20% water. How much dry fruit can be obtained from 100 kg fresh fruit?",
+    "options": [
+      "(a) 80",
+      "(b) 60",
+      "(c) 40",
+      "(d) 20"
+    ],
+    "correctIndex": 2,
+    "explanation": "गूदे की मात्रा = 100 × 32% = D × 80% => D = 40 kg.",
+    "topic": "Mixture & Fresh Fruit"
+  },
+  {
+    "id": 127,
+    "questionNumber": 127,
+    "hindi": "एक संख्या को पहले 10% घटाया जाता है और फिर 10% बढ़ाया जाता है। प्राप्त संख्या मूल संख्या से 100 कम है। मूल संख्या है:",
+    "english": "A number is first decreased by 10% and then increased by 10%. The number so obtained is 100 less than original number. Original number is:",
+    "options": [
+      "(a) 100000",
+      "(b) 100",
+      "(c) 10000",
+      "(d) 1000"
+    ],
+    "correctIndex": 2,
+    "explanation": "कमी = 1% = 100 => मूल संख्या = 10,000.",
+    "topic": "Numbers & Successive %"
+  },
+  {
+    "id": 128,
+    "questionNumber": 128,
+    "hindi": "(8 का 0.008% का 0.08%)^(1/9) का मान ज्ञात कीजिए।",
+    "english": "Find value of (0.08% of 0.008% of 8)^(1/9):",
+    "options": [
+      "(a) 0.8",
+      "(b) 0.2",
+      "(c) 0.64",
+      "(d) 0.08"
+    ],
+    "correctIndex": 1,
+    "explanation": "[8 × (8 × 10^-5) × (8 × 10^-4)]^(1/9) = (8³ × 10^-9)^(1/9) = (2^9 × 10^-9)^(1/9) = 0.2.",
+    "topic": "Basic Percentage & Powers"
+  },
+  {
+    "id": 129,
+    "questionNumber": 129,
+    "hindi": "एक कार्यालय में, कर्मचारियों की कुल संख्या की 70% महिलाएं हैं। 85 पुरुषों सहित कर्मचारियों की कुल संख्या के 80% को पदोन्नति मिली। यदि वहां 105 महिला कर्मचारी हैं, तो कितने प्रतिशत महिला कर्मचारियों को पदोन्नति मिली?",
+    "english": "In an office, 70% of employees are women. 80% of total employees including 85 men got promotion. If 105 female employees, what % of female employees got promotion?",
+    "options": [
+      "(a) 30%",
+      "(b) 33 1/3 %",
+      "(c) 40%",
+      "(d) 35%"
+    ],
+    "correctIndex": 1,
+    "explanation": "महिला कर्मचारी = 105 (70%), कुल कर्मचारी = 150. कुल पदोन्नति = 150 × 80% = 120. महिला पदोन्नति = 120 - 85 = 35. प्रतिशत = (35/105) × 100 = 33 1/3%.",
+    "topic": "Percentage & Ratio"
+  },
+  {
+    "id": 130,
+    "questionNumber": 130,
+    "hindi": "एक संख्या के 38% और उसी संख्या के 22% के बीच का अंतर 3200 है। उस संख्या का 15 1/2 % कितना होगा?",
+    "english": "Difference between 38% and 22% of a number is 3200. What is 15 1/2 % of that number?",
+    "options": [
+      "(a) 3200",
+      "(b) 2800",
+      "(c) 3000",
+      "(d) 3100"
+    ],
+    "correctIndex": 3,
+    "explanation": "16% = 3200 => 1% = 200 => 15.5% = 15.5 × 200 = 3100.",
+    "topic": "Numbers"
+  },
+  {
+    "id": 131,
+    "questionNumber": 131,
+    "hindi": "यदि 110 को x% कम करने पर प्राप्त परिणाम 50 को x% बढ़ाने पर प्राप्त परिणाम के समान है, तो 650 का x%, 780 के (x-10)% से कितने प्रतिशत अधिक होगा? (निकटतम पूर्णांक तक शुद्ध)",
+    "english": "If 110 decreased by x% gives same result as 50 increased by x%, then x% of 650 is what % more than (x-10)% of 780?",
+    "options": [
+      "(a) 17%",
+      "(b) 14%",
+      "(c) 12%",
+      "(d) 18%"
+    ],
+    "correctIndex": 1,
+    "explanation": "x = 37.5. 650 का 37.5% = 243.75, 780 का 27.5% = 214.5. प्रतिशत अधिक = (29.25 / 214.5) × 100 ≈ 14%.",
+    "topic": "Algebraic Percentage"
+  },
+  {
+    "id": 132,
+    "questionNumber": 132,
+    "hindi": "यदि 400 का 25% + 1260 का 35% + 1800 का 27% = 1020 + x है, तो x का मान _____ के बीच होगा।",
+    "english": "If 25% of 400 + 35% of 1260 + 27% of 1800 = 1020 + x, value of x lies between:",
+    "options": [
+      "(a) 6 to 10",
+      "(b) 0 to 5",
+      "(c) 11 to 15",
+      "(d) 16 to 20"
+    ],
+    "correctIndex": 0,
+    "explanation": "100 + 441 + 486 = 1027 = 1020 + x => x = 7, which lies between 6 to 10.",
+    "topic": "Simplification & Percentage"
+  },
+  {
+    "id": 133,
+    "questionNumber": 133,
+    "hindi": "A और B के वेतन का योग ₹45000 है। A अपने वेतन का 85% और B अपने वेतन का 70% खर्च करता है। यदि अब उनकी बचत समान है, तो B का वेतन (₹ में) क्या है?",
+    "english": "Sum of salaries of A and B is ₹45000. A spends 85% and B spends 70%. If their savings are now equal, B's salary (₹) is:",
+    "options": [
+      "(a) 30,000",
+      "(b) 18,000",
+      "(c) 12,600",
+      "(d) 15,000"
+    ],
+    "correctIndex": 3,
+    "explanation": "15% of A = 30% of B => A = 2B => 3B = 45000 => B = ₹15,000.",
+    "topic": "Salary & Savings"
+  },
+  {
+    "id": 134,
+    "questionNumber": 134,
+    "hindi": "18% of 15% of 25/9 of 3800 = ?",
+    "english": "18% of 15% of 25/9 of 3800 = ?",
+    "options": [
+      "(a) 285",
+      "(b) 582",
+      "(c) 583",
+      "(d) 385"
+    ],
+    "correctIndex": 0,
+    "explanation": "0.18 × 0.15 × (25/9) × 3800 = 285.",
+    "topic": "Simplification & Percentage"
+  },
+  {
+    "id": 135,
+    "questionNumber": 135,
+    "hindi": "यदि किसी भिन्न के अंश में 15% की वृद्धि की जाती है और हर में 20% की कमी की जाती है, तो इस प्रकार प्राप्त भिन्न 17/65 होता है। मूल भिन्न क्या है?",
+    "english": "If numerator of a fraction is increased by 15% and denominator decreased by 20%, resulting fraction is 17/65. Original fraction is:",
+    "options": [
+      "(a) 281/1495",
+      "(b) 278/1495",
+      "(c) 267/1495",
+      "(d) 272/1495"
+    ],
+    "correctIndex": 3,
+    "explanation": "(x × 1.15) / (y × 0.80) = 17 / 65 => x/y = 272 / 1495.",
+    "topic": "Fraction & Percentage"
+  },
+  {
+    "id": 136,
+    "questionNumber": 136,
+    "hindi": "एक विद्यार्थी ने 4/3 के स्थान पर किसी संख्या को 3/4 गुणा किया। त्रुटि प्रतिशत क्या है?",
+    "english": "A student multiplied a number by 3/4 instead of 4/3. What is the percentage error?",
+    "options": [
+      "(a) 59.67%",
+      "(b) 43.75%",
+      "(c) 67.45%",
+      "(d) 39.34%"
+    ],
+    "correctIndex": 1,
+    "explanation": "त्रुटि = (16 - 9) / 16 × 100 = 7/16 × 100 = 43.75%.",
+    "topic": "Percentage Error"
+  },
+  {
+    "id": 137,
+    "questionNumber": 137,
+    "hindi": "किसी सर्वेक्षण में यह पाया गया कि किसी निर्वाचन क्षेत्र में, 55% मतदाता पुरुष हैं और शेष महिलाएं हैं। 40% पुरुष मतदाता शिक्षित हैं और 33 1/3 % महिला मतदाता अशिक्षित हैं। कितने प्रतिशत मतदाता शिक्षित हैं?",
+    "english": "In a constituency, 55% male and rest female. 40% males educated and 33 1/3% females uneducated. What % voters are educated?",
+    "options": [
+      "(a) 48%",
+      "(b) 52%",
+      "(c) 37%",
+      "(d) 54%"
+    ],
+    "correctIndex": 1,
+    "explanation": "शिक्षित पुरुष = 55 × 0.40 = 22. शिक्षित महिलाएं = 45 × (2/3) = 30. कुल शिक्षित = 52%.",
+    "topic": "Survey & Ratio"
+  },
+  {
+    "id": 138,
+    "questionNumber": 138,
+    "hindi": "एक शिष्य ने एक अंक को 5/3 के बजाय 3/5 से गुणा कर दिया। गणना में हुई प्रतिशत त्रुटि क्या है?",
+    "english": "A pupil multiplied a number by 3/5 instead of 5/3. What is % error in calculation?",
+    "options": [
+      "(a) 64",
+      "(b) 47",
+      "(c) 58",
+      "(d) 52"
+    ],
+    "correctIndex": 0,
+    "explanation": "(25 - 9) / 25 × 100 = 64%.",
+    "topic": "Percentage Error"
+  },
+  {
+    "id": 139,
+    "questionNumber": 139,
+    "hindi": "यदि किसी भिन्न के अंश में 50% की वृद्धि की जाए और उसके हर में 28% की कमी की जाए, तो भिन्न का मान 25/36 हो जाता है। मूल भिन्न ज्ञात करें।",
+    "english": "If numerator is increased by 50% and denominator decreased by 28%, fraction becomes 25/36. Find original fraction:",
+    "options": [
+      "(a) 1/5",
+      "(b) 2/3",
+      "(c) 2/5",
+      "(d) 1/3"
+    ],
+    "correctIndex": 3,
+    "explanation": "(N × 1.50) / (D × 0.72) = 25 / 36 => N/D = 18 / 54 = 1/3.",
+    "topic": "Fraction & Percentage"
+  },
+  {
+    "id": 140,
+    "questionNumber": 140,
+    "hindi": "A और B दो ऐसी संख्याएं हैं कि A के 10% और B के 8% का योग, A के 12% और B के 16% के योग के 3/5 के बराबर है। अनुपात A : B _____ है।",
+    "english": "Sum of 10% of A and 8% of B equals 3/5 of sum of 12% of A and 16% of B. Ratio A : B is:",
+    "options": [
+      "(a) 2:3",
+      "(b) 4:7",
+      "(c) 2:7",
+      "(d) 4:3"
+    ],
+    "correctIndex": 1,
+    "explanation": "5(10A + 8B) = 3(12A + 16B) => 14A = 8B => A : B = 4 : 7.",
+    "topic": "Algebraic Percentage"
+  },
+  {
+    "id": 141,
+    "questionNumber": 141,
+    "hindi": "संख्या 36 को एक निश्चित प्रतिशत तक बढ़ाने पर वह 63 हो जाती है। वह प्रतिशत ज्ञात कीजिए।",
+    "english": "Number 36 increased by a certain percentage becomes 63. Find the percentage:",
+    "options": [
+      "(a) 50%",
+      "(b) 75%",
+      "(c) 60%",
+      "(d) 85%"
+    ],
+    "correctIndex": 1,
+    "explanation": "(63 - 36) / 36 × 100 = 27/36 × 100 = 75%.",
+    "topic": "Basic Percentage"
+  },
+  {
+    "id": 142,
+    "questionNumber": 142,
+    "hindi": "एक व्यक्ति अपने वेतन का 10 1/2 % दैनिक उपभोग की वस्तुओं पर और शेष का 30% घर के किराये पर व्यय करता है; उसके बाद, उसके पास ₹12,000 शेष बचता है। उसका वेतन कितना है (निकटतम पूर्णांक में)?",
+    "english": "Spends 10 1/2% on daily items, 30% of remainder on rent, left with ₹12,000. Find salary (nearest integer):",
+    "options": [
+      "(a) ₹18,050",
+      "(b) ₹19,154",
+      "(c) ₹10,054",
+      "(d) ₹19,000"
+    ],
+    "correctIndex": 1,
+    "explanation": "बचत = 89.5% × 70% = 62.65% = 12000 => कुल वेतन = ₹19,154.",
+    "topic": "Salary & Expenditure"
+  },
+  {
+    "id": 143,
+    "questionNumber": 143,
+    "hindi": "अपने वेतन का 20% किराने पर और शेषराशि 30% घर के मासिक किराए पर खर्च करने के बाद, एक व्यक्ति के पास ₹8,400 बचते हैं। उसका मासिक वेतन कितना है?",
+    "english": "Spends 20% on grocery, 30% of remainder on rent, left with ₹8,400. Find monthly salary:",
+    "options": [
+      "(a) ₹42,000",
+      "(b) ₹28,000",
+      "(c) ₹16,800",
+      "(d) ₹15,000"
+    ],
+    "correctIndex": 3,
+    "explanation": "80% × 70% = 56% = 8400 => कुल वेतन = ₹15,000.",
+    "topic": "Salary & Expenditure"
+  },
+  {
+    "id": 144,
+    "questionNumber": 144,
+    "hindi": "एक फल विक्रेता किसी ग्राहक को अपने पास मौजूद कुल संतरों में से 45% और एक संतरा बेचता है। फिर वह शेष संतरों के 20% और 2 संतरे दूसरे ग्राहक को बेचता है। फिर वह बचे हुए संतरों के 90% संतरे तीसरे ग्राहक को बेचता है और उसके पास अभी भी 5 संतरे बच जाते हैं। फल विक्रेता के पास आरंभ में कितने संतरे थे?",
+    "english": "Fruit seller sells 45% of oranges + 1 to first customer, 20% of remaining + 2 to second, 90% of remaining to third, left with 5. Initial oranges:",
+    "options": [
+      "(a) 100",
+      "(b) 111",
+      "(c) 121",
+      "(d) 120"
+    ],
+    "correctIndex": 3,
+    "explanation": "बैकवर्ड: 5/0.10 = 50 => (50+2)/0.80 = 65 => (65+1)/0.55 = 120 संतरे.",
+    "topic": "Remainder & Logic"
+  },
+  {
+    "id": 145,
+    "questionNumber": 145,
+    "hindi": "दो वस्तुओं की कीमतें 4 : 5 के अनुपात में हैं। यदि पहले की कीमत में x% की वृद्धि हुई है और दूसरे की कीमत में 30% की कमी हुई है, तो A और B की नई कीमतें 10 : 7 के अनुपात में होंगी। x का मान है:",
+    "english": "Prices are in ratio 4 : 5. First increased by x%, second decreased by 30%, new ratio is 10 : 7. Value of x is:",
+    "options": [
+      "(a) 24.5",
+      "(b) 22.5",
+      "(c) 25",
+      "(d) 20"
+    ],
+    "correctIndex": 2,
+    "explanation": "40 से 50 हुई => 25% वृद्धि.",
+    "topic": "Ratio & Percentage"
+  },
+  {
+    "id": 146,
+    "questionNumber": 146,
+    "hindi": "यदि चीनी के मूल्य में 22% की वृद्धि हो जाती है और कोई व्यक्ति अपने खर्च में केवल 12% की ही वृद्धि करना चाहता है तो उसे खपत में कितने प्रतिशत की कमी करनी होगी? (दशमलव के एक स्थान तक)",
+    "english": "Price of sugar increases by 22%, expenditure increases by only 12%. By what % should consumption decrease?",
+    "options": [
+      "(a) 10%",
+      "(b) 7.8%",
+      "(c) 8.2%",
+      "(d) 8.6%"
+    ],
+    "correctIndex": 2,
+    "explanation": "(122 - 112)/122 × 100 = 1000/122 ≈ 8.2%.",
+    "topic": "Price & Expenditure"
+  },
+  {
+    "id": 147,
+    "questionNumber": 147,
+    "hindi": "A की आय B की आय से 25% अधिक है और C की आय A और B की आय के योग से 65% कम है। C की आय A की आय से कितने प्रतिशत कम है?",
+    "english": "Income of A is 25% more than B. C's income is 65% less than sum of A and B. C's income is what % less than A?",
+    "options": [
+      "(a) 28",
+      "(b) 32",
+      "(c) 35",
+      "(d) 37"
+    ],
+    "correctIndex": 3,
+    "explanation": "B = 100, A = 125, C = 225 × 0.35 = 78.75. अंतर = 46.25 => (46.25/125) × 100 = 37%.",
+    "topic": "Percentage Comparison"
+  },
+  {
+    "id": 148,
+    "questionNumber": 148,
+    "hindi": "खाद्य तेल की कीमत में 25% की वृद्धि हो गई। उसी बजट को बनाए रखने के लिए एक परिवार को अपने उपभोग में कितने प्रतिशत की कमी करनी चाहिए?",
+    "english": "Price of cooking oil increased by 25%. What % reduction in consumption to keep budget same?",
+    "options": [
+      "(a) 20%",
+      "(b) 70%",
+      "(c) 30%",
+      "(d) 80%"
+    ],
+    "correctIndex": 0,
+    "explanation": "(25 / 125) × 100 = 20%.",
+    "topic": "Price & Expenditure"
+  },
+  {
+    "id": 149,
+    "questionNumber": 149,
+    "hindi": "राधा, अपनी आय का 25% बचाती है। यदि उसके व्यय में 20% की वृद्धि होती है और उसकी आय में 29% की वृद्धि होती है, तो उसकी बचत में वृद्धि ज्ञात करें।",
+    "english": "Radha saves 25% of income. If expenditure increases by 20% and income by 29%, find % increase in savings:",
+    "options": [
+      "(a) 56%",
+      "(b) 52%",
+      "(c) 65%",
+      "(d) 70%"
+    ],
+    "correctIndex": 0,
+    "explanation": "बचत वृद्धि = 29 - 15 = 14 => (14/25) × 100 = 56%.",
+    "topic": "Income & Expenditure"
+  },
+  {
+    "id": 150,
+    "questionNumber": 150,
+    "hindi": "एक ग्राम के सोने के सिक्के के मूल्य में सोमवार को इसके प्रारंभिक मूल्य पर 10% की कमी होती है, मंगलवार को 20% की वृद्धि होती है और बुधवार को फिर से 8% की वृद्धि होती है। गुरुवार को इसमें फिर से 5% की वृद्धि होती है। यदि गुरुवार को अंतिम मूल्य ₹5511.24 था, तो सोमवार को एक ग्राम के सोने के सिक्के का प्रारंभिक मूल्य (₹ में) कितना था?",
+    "english": "Gold coin price: -10% Mon, +20% Tue, +8% Wed, +5% Thu. Final price ₹5511.24. Find initial price on Mon (₹):",
+    "options": [
+      "(a) 4500",
+      "(b) 4250",
+      "(c) 4800",
+      "(d) 5000"
+    ],
+    "correctIndex": 0,
+    "explanation": "P × 0.90 × 1.20 × 1.08 × 1.05 = 5511.24 => P = ₹4,500.",
+    "topic": "Successive Percentage"
+  },
+  {
+    "id": 151,
+    "questionNumber": 151,
+    "hindi": "एक व्यक्ति के वेतन में 50% की कमी की गई और बाद में 50% की वृद्धि हुई और फिर 100% की वृद्धि हुई। उसे कितने प्रतिशत हानि या लाभ होता है?",
+    "english": "A person's salary decreased by 50%, then increased by 50%, and then increased by 100%. What % loss or gain does he have?",
+    "options": [
+      "(a) Loss of 40% / 40% की हानि",
+      "(b) Gain of 50% / 50% का लाभ",
+      "(c) Gain of 25% / 25% का लाभ",
+      "(d) Loss of 10% / 10% की हानि"
+    ],
+    "correctIndex": 1,
+    "explanation": "100 × 0.50 × 1.50 × 2.00 = 150 => 50% का लाभ (Gain of 50%).",
+    "topic": "Salary & Successive %"
+  },
+  {
+    "id": 152,
+    "questionNumber": 152,
+    "hindi": "एक त्रिभुज के आधार में 40% की वृद्धि की गई। इसकी ऊंचाई कितने प्रतिशत (दशमलव के दो स्थानों तक सही) बढ़ाई जानी चाहिए ताकि क्षेत्रफल में 60% की वृद्धि हो जाए?",
+    "english": "Base of a triangle increased by 40%. By what % (correct to 2 decimals) should height increase for area to increase by 60%?",
+    "options": [
+      "(a) 14.29%",
+      "(b) 20.01%",
+      "(c) 15.54%",
+      "(d) 18.62%"
+    ],
+    "correctIndex": 0,
+    "explanation": "1.60 / 1.40 = 8/7 = 1 + 1/7 ≈ 14.29%.",
+    "topic": "Geometry & Triangle Area"
+  },
+  {
+    "id": 153,
+    "questionNumber": 153,
+    "hindi": "A ने B से 30% अधिक निवेश किया। B ने C से 40% कम निवेश किया, जिसने ₹8,000 का निवेश किया। उन सभी के द्वारा निवेश की गई कुल राशि का औसत (निकटतम ₹ तक) कितना है?",
+    "english": "A invested 30% more than B. B invested 40% less than C, who invested ₹8,000. Average investment of all three (nearest ₹):",
+    "options": [
+      "(a) 6,347",
+      "(b) 6,417",
+      "(c) 6,215",
+      "(d) 6,143"
+    ],
+    "correctIndex": 0,
+    "explanation": "C = 8000, B = 4800, A = 6240. कुल = 19040 => औसत = ₹6,347.",
+    "topic": "Percentage & Average"
+  },
+  {
+    "id": 154,
+    "questionNumber": 154,
+    "hindi": "चीनी की कीमत में 15% की कमी आई है। कोई व्यक्ति कितने प्रतिशत उपभोग बढ़ा सकता है ताकि व्यय में कोई परिवर्तन न हो?",
+    "english": "Price of sugar decreased by 15%. By what % can consumption increase with no change in expenditure?",
+    "options": [
+      "(a) 300/23 %",
+      "(b) 50/3 %",
+      "(c) 20/3 %",
+      "(d) 300/17 %"
+    ],
+    "correctIndex": 3,
+    "explanation": "(15 / 85) × 100 = 300/17%.",
+    "topic": "Price & Expenditure"
+  },
+  {
+    "id": 155,
+    "questionNumber": 155,
+    "hindi": "A अपनी मासिक आय से घरेलू खर्च पर 24%, मनोरंजन पर 16%, शिक्षा पर 12% व्यय करता हैं और बाकी बचा लेता हैं। यदि बचत ₹3288 हैं तो A की मासिक आय कितनी होगी?",
+    "english": "A spends 24% on domestic, 16% on entertainment, 12% on education, saves rest. If savings is ₹3288, monthly income is:",
+    "options": [
+      "(a) ₹6323",
+      "(b) ₹6480",
+      "(c) ₹6654",
+      "(d) ₹6850"
+    ],
+    "correctIndex": 3,
+    "explanation": "बचत = 48% = 3288 => कुल आय = ₹6,850.",
+    "topic": "Salary & Expenditure"
+  },
+  {
+    "id": 156,
+    "questionNumber": 156,
+    "hindi": "A अपनी आय का 12% बचाता है। यदि वह ₹2,16,128 खर्च करती है, तो उसकी कुल आय है:",
+    "english": "A saves 12% of income. If expenditure is ₹2,16,128, total income is:",
+    "options": [
+      "(a) ₹2,42,063",
+      "(b) ₹2,45,600",
+      "(c) ₹2,48,000",
+      "(d) ₹2,43,560"
+    ],
+    "correctIndex": 1,
+    "explanation": "88% = 216128 => आय = 216128 / 0.88 = ₹2,45,600.",
+    "topic": "Salary & Expenditure"
+  },
+  {
+    "id": 157,
+    "questionNumber": 157,
+    "hindi": "140 प्रश्नों वाली एक परीक्षा में, एक अभ्यर्थी ने पहले 80 प्रश्नों में से 70% का सही उत्तर दिया। परीक्षा में 60% अंक प्राप्त करने के लिए उसे शेष प्रश्नों में से कितनें प्रतिशत प्रश्नों के सही उत्तर देने होंगे?",
+    "english": "In exam of 140 questions, answered 70% of first 80 correctly. To get 60% overall, what % of remaining must be correct?",
+    "options": [
+      "(a) 40%",
+      "(b) 45 1/3 %",
+      "(c) 46 2/3 %",
+      "(d) 35%"
+    ],
+    "correctIndex": 2,
+    "explanation": "शेष 60 में 28 सही => (28/60) × 100 = 46 2/3%.",
+    "topic": "Exam & Pass/Fail"
+  },
+  {
+    "id": 158,
+    "questionNumber": 158,
+    "hindi": "एक व्यक्ति अपनी आय का 25% बचाता है। यदि उसकी आय में 20% की वृद्धि हो जाती है और फिर भी वह पूर्व के बराबर धनराशि बचाता है, तो उसके खर्च में हुई वृद्धि का प्रतिशत कितना है?",
+    "english": "A person saves 25% of income. Income increases by 20% but saves same amount as before. Find % increase in expenditure:",
+    "options": [
+      "(a) 26 2/3",
+      "(b) 25",
+      "(c) 24",
+      "(d) 30"
+    ],
+    "correctIndex": 0,
+    "explanation": "खर्च 75 से 95 हुआ => (20/75) × 100 = 26 2/3%.",
+    "topic": "Income & Expenditure"
+  },
+  {
+    "id": 159,
+    "questionNumber": 159,
+    "hindi": "किसी व्यक्ति का वेतन ₹8,100 से बढ़कर ₹9,000 हो जाता है। उसके वेतन में हुई प्रतिशत वृद्धि ज्ञात करें।",
+    "english": "Salary increases from ₹8,100 to ₹9,000. Find percentage increase in salary:",
+    "options": [
+      "(a) 13 7/9 %",
+      "(b) 11 1/9 %",
+      "(c) 9 1/9 %",
+      "(d) 6 1/9 %"
+    ],
+    "correctIndex": 1,
+    "explanation": "(900 / 8100) × 100 = 100/9% = 11 1/9%.",
+    "topic": "Salary & Percentage Change"
+  },
+  {
+    "id": 160,
+    "questionNumber": 160,
+    "hindi": "यदि X का 49% = Y है, तो 50 का Y% इनमें से किसके बराबर होगा",
+    "english": "If 49% of X = Y, then Y% of 50 is equal to:",
+    "options": [
+      "(a) 40% of Y",
+      "(b) 24.5% of Y",
+      "(c) 50% of X",
+      "(d) 24.5% of X"
+    ],
+    "correctIndex": 3,
+    "explanation": "50 × (0.49X / 100) = 0.245X = 24.5% of X.",
+    "topic": "Algebraic Percentage"
+  },
+  {
+    "id": 161,
+    "questionNumber": 161,
+    "hindi": "डीजल की कीमत में 26% की वृद्धि होती है। एक व्यक्ति अपने डीजल के व्यय में केवल 15% की वृद्धि करना चाहता हैं उसे अपनी खपत को कितने प्रतिशत (दशमलव को एक स्थान तक शुद्ध) कम करना होगा?",
+    "english": "Price of diesel increases by 26%, expenditure increases by only 15%. By what % should consumption reduce?",
+    "options": [
+      "(a) 9.5%",
+      "(b) 6.5%",
+      "(c) 8.7%",
+      "(d) 7.2%"
+    ],
+    "correctIndex": 2,
+    "explanation": "(126 - 115) / 126 × 100 = 1100 / 126 ≈ 8.7%.",
+    "topic": "Price & Expenditure"
+  },
+  {
+    "id": 162,
+    "questionNumber": 162,
+    "hindi": "एक आदमी अपनी आय का 72% खर्च करता है। यदि उसकी आय में 28% की वृद्धि होती है और उसके व्यय में 25% की वृद्धि होती है, तो उसकी बचत में कितने प्रतिशत की वृद्धि या कमी होती है (एक दशमलव स्थान तक सही)?",
+    "english": "Spends 72% of income. Income increases by 28%, expenditure by 25%. Find % change in savings:",
+    "options": [
+      "(a) 26.9% decrease / 26.9% की कमी",
+      "(b) 38.4% increase / 38.4% की वृद्धि",
+      "(c) 35.7% increase / 35.7% की वृद्धि",
+      "(d) 26.3% decrease / 26.3% की कमी"
+    ],
+    "correctIndex": 2,
+    "explanation": "बचत वृद्धि = 28 - 18 = 10 => (10/28) × 100 = 35.7% increase.",
+    "topic": "Income & Expenditure"
+  },
+  {
+    "id": 163,
+    "questionNumber": 163,
+    "hindi": "यदि y का x% 150 है और z का y% 300 है, तो x और z के बीच का संबंध है:",
+    "english": "If x% of y is 150 and y% of z is 300, relation between x and z is:",
+    "options": [
+      "(a) z = x",
+      "(b) z = x/3",
+      "(c) z = x/2",
+      "(d) z = 2x"
+    ],
+    "correctIndex": 3,
+    "explanation": "yz / xy = 300 / 150 = 2 => z = 2x.",
+    "topic": "Algebraic Percentage"
+  },
+  {
+    "id": 164,
+    "questionNumber": 164,
+    "hindi": "दो विद्यार्थी, A और B किसी परीक्षा में शामिल हुए। A को B से 8 अंक अधिक मिले और पूर्ववर्ती का अंक, उनके अंकों के योगफल का 55% था। A और B के प्राप्तांकों का योगफल है:",
+    "english": "A and B appeared in exam. A got 8 marks more than B and A's mark was 55% of sum of their marks. Sum of marks of A and B:",
+    "options": [
+      "(a) 100",
+      "(b) 80",
+      "(c) 75",
+      "(d) 90"
+    ],
+    "correctIndex": 1,
+    "explanation": "10% of sum = 8 => sum = 80.",
+    "topic": "Exam & Marks"
+  },
+  {
+    "id": 165,
+    "questionNumber": 165,
+    "hindi": "एक कक्षा में, यदि विद्यार्थियों में से 60% लड़के हैं तथा लड़कियों की संख्या 36 है, तो लड़कों की संख्या ज्ञात करें।",
+    "english": "In a class, 60% are boys and number of girls is 36. Find number of boys:",
+    "options": [
+      "(a) 65",
+      "(b) 54",
+      "(c) 60",
+      "(d) 58"
+    ],
+    "correctIndex": 1,
+    "explanation": "40% = 36 => 1% = 0.9 => लड़के = 60 × 0.9 = 54.",
+    "topic": "Ratio & Percentage"
+  },
+  {
+    "id": 166,
+    "questionNumber": 166,
+    "hindi": "यदि 400 का 30% + 70 का x% = 536 का 25% है। तो x का मान ज्ञात करें।",
+    "english": "If 30% of 400 + x% of 70 = 25% of 536, find value of x:",
+    "options": [
+      "(a) 20",
+      "(b) 30",
+      "(c) 10",
+      "(d) 40"
+    ],
+    "correctIndex": 0,
+    "explanation": "120 + 0.7x = 134 => 0.7x = 14 => x = 20.",
+    "topic": "Simplification & Percentage"
+  },
+  {
+    "id": 167,
+    "questionNumber": 167,
+    "hindi": "एक दुकानदार के पास निश्चित संख्या में सेब हैं जिनमें से 10% सेब सड़े हुए पाए गए। वह शेष अच्छे सेबों में से 85% को बेच देता है और अभी भी उसके पास 405 अच्छे सेब बच जाते हैं। प्रारंभ में उसके पास कितने सेब थे?",
+    "english": "10% rotten. Sells 85% of remaining good apples, still left with 405 good apples. Initial apples:",
+    "options": [
+      "(a) 3500",
+      "(b) 3000",
+      "(c) 2500",
+      "(d) 2000"
+    ],
+    "correctIndex": 1,
+    "explanation": "13.5% = 405 => कुल = 3000 सेब.",
+    "topic": "Percentage & Remainder"
+  },
+  {
+    "id": 168,
+    "questionNumber": 168,
+    "hindi": "रेणु की आय सुधा की आय से 10% कम है, और सुधा की आय 3,000 रुपये से 10% अधिक है। रेणु की आय है:",
+    "english": "Renu's income is 10% less than Sudha's, and Sudha's income is 10% more than ₹3,000. Renu's income is:",
+    "options": [
+      "(a) ₹3,300",
+      "(b) ₹3,070",
+      "(c) ₹2,700",
+      "(d) ₹2,970"
+    ],
+    "correctIndex": 3,
+    "explanation": "सुधा = 3300 => रेणु = 3300 × 0.90 = ₹2,970.",
+    "topic": "Percentage Comparison"
+  },
+  {
+    "id": 169,
+    "questionNumber": 169,
+    "hindi": "किसी वस्तु की कीमत में 28% की वृद्धि होती है। हालांकि, इस पर हुए खर्च में 12% की वृद्धि होती है। इसकी खपत में होने वाली प्रतिशत वृद्धि या कमी ज्ञात करें।",
+    "english": "Price increases by 28%, expenditure increases by 12%. Find % change in consumption:",
+    "options": [
+      "(a) 16% Increase/कमी",
+      "(b) 12.5% Decrease/वृद्धि",
+      "(c) 12.5% Increase/वृद्धि",
+      "(d) 16% Decrease/कमी"
+    ],
+    "correctIndex": 1,
+    "explanation": "(128 - 112) / 128 × 100 = 16/128 × 100 = 12.5% Decrease (कमी).",
+    "topic": "Price & Expenditure"
+  },
+  {
+    "id": 170,
+    "questionNumber": 170,
+    "hindi": "एक स्कूल में दसवीं कक्षा की परीक्षा में लड़कियों का औसत उत्तीर्ण प्रतिशत 85% और लड़कों का 83% है। उस स्कूल के दसवीं कक्षा के सभी लड़कों और लड़कियों का औसत उत्तीर्ण प्रतिशत 83.7% है। उस स्कूल की दसवीं कक्षा में लड़कियों की संख्या का प्रतिशत ज्ञात कीजिए।",
+    "english": "Girls average pass 85%, boys 83%, overall 83.7%. Percentage of girls in class 10:",
+    "options": [
+      "(a) 35%",
+      "(b) 30%",
+      "(c) 45%",
+      "(d) 40%"
+    ],
+    "correctIndex": 0,
+    "explanation": "एलिगेशन से लड़कियां : लड़के = 7 : 13 => लड़कियों का % = (7/20) × 100 = 35%.",
+    "topic": "Alligation & Average"
+  },
+  {
+    "id": 171,
+    "questionNumber": 171,
+    "hindi": "एक कक्षा में लड़कों और लड़कियों की संख्या का अनुपात 11 : 9 है। 30% लड़कों और 20% लड़कियों ने एक परीक्षा उत्तीर्ण की। परीक्षा उत्तीर्ण करने वाले विद्यार्थियों का प्रतिशत ज्ञात कीजिए।",
+    "english": "Ratio of boys to girls is 11 : 9. 30% boys and 20% girls passed exam. Percentage of students passed:",
+    "options": [
+      "(a) 3.92%",
+      "(b) 20%",
+      "(c) 24.5%",
+      "(d) 25.5%"
+    ],
+    "correctIndex": 3,
+    "explanation": "(33 + 18) / 200 × 100 = 51 / 200 × 100 = 25.5%.",
+    "topic": "Ratio & Pass/Fail"
+  },
+  {
+    "id": 172,
+    "questionNumber": 172,
+    "hindi": "एक परिवार का गेंहू सब्जियों और तेल पर व्यय 12 : 8 : 5 के अनुपात में है। इन वस्तुओं के मूल्य में क्रमशः 50%, 25% और 40% की वृद्धि हो गई। इन वस्तुओं पर परिवार के व्यय में कितने प्रतिशत की वृद्धि होगी?",
+    "english": "Expenditure on wheat, vegetables, oil is in ratio 12 : 8 : 5. Prices increase by 50%, 25%, 40%. Percentage increase in total expenditure:",
+    "options": [
+      "(a) 40%",
+      "(b) 38%",
+      "(c) 44%",
+      "(d) 42%"
+    ],
+    "correctIndex": 0,
+    "explanation": "(6 + 2 + 2) / 25 × 100 = 10/25 × 100 = 40%.",
+    "topic": "Ratio & Expenditure"
+  },
+  {
+    "id": 173,
+    "questionNumber": 173,
+    "hindi": "113. चीनी तथा पानी के घोल में जो कि 28 लीटर है उसमें 26.4% चीनी है। घोल को गर्म करके वाष्प द्वारा 6 लीटर पानी उड़ा दिये जाने पर शेष घोल में कितने प्रतिशत चीनी होगी?",
+    "english": "In 28 L sugar-water solution, 26.4% sugar. 6 L evaporated. Percentage of sugar in remaining solution:",
+    "options": [
+      "(a) 29.4%",
+      "(b) 31.2%",
+      "(c) 30.8%",
+      "(d) 33.6%"
+    ],
+    "correctIndex": 3,
+    "explanation": "(28 × 0.264) / 22 × 100 = 33.6%.",
+    "topic": "Mixture & Solution"
+  },
+  {
+    "id": 174,
+    "questionNumber": 174,
+    "hindi": "119. यदि 35% उत्तीर्ण अंक हैं। एक छात्र को 200 अंक प्राप्त होते हैं, फिर भी वह 24 अंकों से असफल हो जाता है। अधिकतम अंक क्या हैं?",
+    "english": "Passing marks 35%. Student gets 200 marks and fails by 24 marks. Maximum marks are:",
+    "options": [
+      "(a) 820",
+      "(b) 560",
+      "(c) 640",
+      "(d) 680"
+    ],
+    "correctIndex": 2,
+    "explanation": "35% = 224 => कुल अंक = (224 / 35) × 100 = 640.",
+    "topic": "Exam & Passing Marks"
+  },
+  {
+    "id": 175,
+    "questionNumber": 175,
+    "hindi": "123. जब कोई छात्र 28% अंक प्राप्त करता है तो वह 58 अंकों से असफल हो जाता है। लेकिन जब वह 41% अंक प्राप्त करता है तो वह 6 अंकों के साथ असफल हो जाता है। प्राप्तांक % ज्ञात करें",
+    "english": "When a student scores 28%, fails by 58 marks. When scores 41%, fails by 6 marks. Find passing percentage:",
+    "options": [
+      "(a) 42.5%",
+      "(b) 43%",
+      "(c) 40.66%",
+      "(d) 41.5%"
+    ],
+    "correctIndex": 0,
+    "explanation": "13% = 52 => 1% = 4 अंक => उत्तीर्ण % = 41% + 1.5% = 42.5%.",
+    "topic": "Exam & Passing Marks"
+  },
+  {
+    "id": 176,
+    "questionNumber": 176,
+    "hindi": "मीना एक परीक्षा में 40% स्कोर करती है और समीक्षा के बाद, भले ही उसका स्कोर 50% बढ़ जाता है, वह 35 अंकों से फेल हो जाती है। यदि उसका उत्तर-समीक्षा स्कोर 20% बढ़ा है, तो उसके पास उत्तीर्ण अंक से 7 अंक अधिक होंगे। परीक्षा उत्तीर्ण करने के लिए आवश्यक प्रतिशत अंक है",
+    "english": "Meena scores 40%. After review score increases 50%, fails by 35. If post-review score increases 20%, she has 7 marks more than pass. Pass percentage:",
+    "options": [
+      "(a) 70",
+      "(b) 80",
+      "(c) 75",
+      "(d) 60"
+    ],
+    "correctIndex": 0,
+    "explanation": "उत्तीर्ण % = 70%.",
+    "topic": "Exam & Passing Marks"
+  },
+  {
+    "id": 177,
+    "questionNumber": 177,
+    "hindi": "155. हर साल एक वस्तु की कीमत 20% बढ़ जाती है। यदि तीसरे और चौथे वर्ष के अंत में कीमतों में अंतर Rs. 259.20 है, तो दूसरे वर्ष के अंत में मूल्य का 40% (रु में) है:",
+    "english": "Price increases 20% every year. If difference between 3rd and 4th year prices is Rs. 259.20, find 40% of price at end of 2nd year (Rs):",
+    "options": [
+      "(a) 484",
+      "(b) 432",
+      "(c) 384",
+      "(d) 472"
+    ],
+    "correctIndex": 1,
+    "explanation": "P3 = 1296, P2 = 1080. 40% of P2 = 1080 × 0.40 = 432.",
+    "topic": "Compound Growth"
+  },
+  {
+    "id": 178,
+    "questionNumber": 178,
+    "hindi": "197. एक कंपनी 15000 रू की बिक्री तक अपने विक्रेता को 8.5% कमीशन देती है। 15000 रूपये से अधिक की बिक्री पर अतिरिक्त 2.5% कमीशन भी देती है। यदि सेल्समैन की कुल कमाई 43625 रू है। कुल बिक्री का पता लगाएं?",
+    "english": "Company gives 8.5% commission up to ₹15000 and 2.5% additional above ₹15000. Total earning ₹43625. Find total sales:",
+    "options": [
+      "(a) 400000",
+      "(b) 320000",
+      "(c) 360000",
+      "(d) 420000"
+    ],
+    "correctIndex": 0,
+    "explanation": "कुल दर = 11%. 43625 + 375 = 44000 => कुल बिक्री = (44000/11) × 100 = ₹4,00,000.",
+    "topic": "Salesman Commission"
+  },
+  {
+    "id": 179,
+    "questionNumber": 179,
+    "hindi": "196. एक कंपनी अपने विक्रेता को कुल बिक्री पर 16% कमीशन देती है। तथा 18500 से ऊपर की बिक्री पर 3% का बोनस भी देती है, यदि विक्रेता की कुल आय 15595 रूपये है, तो कुल बिक्री ज्ञात कीजिये?",
+    "english": "Company gives 16% commission on total sales and 3% bonus over 18500. Total income ₹15595. Find total sales:",
+    "options": [
+      "(a) 69000",
+      "(b) 75000",
+      "(c) 85000",
+      "(d) 90000"
+    ],
+    "correctIndex": 3,
+    "explanation": "15595 + 555 = 16150 => (16150 / 19) × 100 = ₹90,000.",
+    "topic": "Salesman Commission"
+  },
+  {
+    "id": 180,
+    "questionNumber": 180,
+    "hindi": "एक कंपनी अपने सेल्समैन को उसकी कुल बिक्री पर 15% कमीशन और 18000 से ऊपर की बिक्री पर 2% बोनस देती है। यदि विक्रेता ने कुल बिक्री से अपना कमीशन घटाकर 75060 कंपनी में जमा किया। कुल बिक्री का पता लगाएं।",
+    "english": "Company gives 15% commission and 2% bonus above 18000. Salesman deposits ₹75060 after deducting commission. Find total sales:",
+    "options": [
+      "(a) 90000",
+      "(b) 84000",
+      "(c) 85000",
+      "(d) 100000"
+    ],
+    "correctIndex": 0,
+    "explanation": "कुल बिक्री = ₹90,000.",
+    "topic": "Salesman Commission"
+  },
+  {
+    "id": 181,
+    "questionNumber": 181,
+    "hindi": "एक कंपनी अपने विक्रेता को 12000 रूपये की बिक्री पर 17% कमीशन देती है तथा 12000 रू से ऊपर की बिक्री पर 22% कमीशन देती है। कुल बिक्री ज्ञात करें यदि कुल आय/जमा दी गई हो।",
+    "english": "Company gives 17% commission up to ₹12000 and 22% above ₹12000. Find total sales:",
+    "options": [
+      "(a) 50000",
+      "(b) 60000",
+      "(c) 64000",
+      "(d) 75000"
+    ],
+    "correctIndex": 1,
+    "explanation": "कुल बिक्री = ₹60,000.",
+    "topic": "Salesman Commission"
+  },
+  {
+    "id": 182,
+    "questionNumber": 182,
+    "hindi": "एक सेल्समैन को कुल बिक्री पर 10.2% कमीशन मिलता है। यदि बिक्री 15000 रू से अधिक हो जाए तब उसे 8.5% बोनस मिलता है। यदि कुल बिक्री 15000 रू से अधिक हो, और उसकी कुल कमाई 3180 रू है। तो उसमें से बोनस कितना था?",
+    "english": "Salesman gets 10.2% commission. If sales exceed ₹15000 gets 8.5% bonus on excess. Total earnings ₹3180. Bonus was:",
+    "options": [
+      "(a) 600",
+      "(b) 750",
+      "(c) 500",
+      "(d) 900"
+    ],
+    "correctIndex": 0,
+    "explanation": "बोनस = ₹600.",
+    "topic": "Salesman Commission"
+  },
+  {
+    "id": 183,
+    "questionNumber": 183,
+    "hindi": "201. एक विक्रेता को कुल बिक्री पर 14% कमीशन लेता है तथा वह 16000 रूपये से ऊपर बिक्री पर 4.5% बोनस भी लेता है। यदि वह 2160 रूपये बोनस प्राप्त करता है तो उसकी कुल कमाई ज्ञात कीजिए।",
+    "english": "Salesman takes 14% commission and 4.5% bonus over ₹16000. If he gets ₹2160 as bonus, find total earnings:",
+    "options": [
+      "(a) 11120",
+      "(b) 11650",
+      "(c) 10800",
+      "(d) 10000"
+    ],
+    "correctIndex": 0,
+    "explanation": "बिक्री = 64000 => कुल कमाई = 8960 + 2160 = ₹11,120.",
+    "topic": "Salesman Commission"
+  },
+  {
+    "id": 184,
+    "questionNumber": 184,
+    "hindi": "205. एक परीक्षा में 70% अभ्यर्थी अंग्रेजी में उत्तीर्ण हुए। 80% गणित में उत्तीर्ण हुए। 10% दोनों ही विषय में फेल हुए। यदि दोनों में 144 अभ्यर्थी उत्तीर्ण हुए, तो कुल अभ्यर्थी कुल थे:",
+    "english": "In exam, 70% passed English, 80% passed Math, 10% failed both. If 144 passed both, total candidates were:",
+    "options": [
+      "(a) 125",
+      "(b) 240",
+      "(c) 200",
+      "(d) 375"
+    ],
+    "correctIndex": 1,
+    "explanation": "दोनों में पास = 60% = 144 => कुल अभ्यर्थी = 240.",
+    "topic": "Venn Diagram & Sets"
+  },
+  {
+    "id": 185,
+    "questionNumber": 185,
+    "hindi": "206. एक परीक्षा में, 53% उम्मीदवार विज्ञान में और 48% गणित में असफल रहे। यदि दोनों विषयों में 40% फेल हुए, तो दोनों विषय में कितने प्रतिशत उत्तीर्ण हुए?",
+    "english": "53% failed science, 48% failed math, 40% failed both. What % passed both subjects?",
+    "options": [
+      "(a) 51%",
+      "(b) 39%",
+      "(c) 49%",
+      "(d) 43%"
+    ],
+    "correctIndex": 1,
+    "explanation": "कम से कम एक में फेल = 61% => दोनों में पास = 39%.",
+    "topic": "Venn Diagram & Sets"
+  },
+  {
+    "id": 186,
+    "questionNumber": 186,
+    "hindi": "207. एक परीक्षा में, 48% उम्मीदवार विज्ञान में उत्तीर्ण हुए। और 56% गणित में असफल रहे। यदि दोनों विषयों में 32% फेल हुए, तो दोनों विषयों में कितने प्रतिशत उत्तीर्ण हुए?",
+    "english": "48% passed science, 56% failed math, 32% failed both. What % passed both subjects?",
+    "options": [
+      "(a) 24%",
+      "(b) 32%",
+      "(c) 28%",
+      "(d) 22%"
+    ],
+    "correctIndex": 0,
+    "explanation": "विज्ञान में फेल = 52%. गणित में फेल = 56%. फेल = 52 + 56 - 32 = 76% => पास = 24%.",
+    "topic": "Venn Diagram & Sets"
+  },
+  {
+    "id": 187,
+    "questionNumber": 187,
+    "hindi": "212. एक समाज में 500 लोग रह रहे हैं, 45% क्रिकेट खेलते हैं? 29% हॉकी खेलते हैं और 48% बैडमिंटन खेलते हैं। 18% कोई खेल नहीं खेलते हैं जबकि 5% लोग क्रिकेट और हॉकी दोनों खेलते हैं और 27% लोग क्रिकेट और बैडमिंटन दोनों खेलते हैं, तो केवल बैडमिंटन खेलने वालों की संख्या ज्ञात करें?",
+    "english": "500 people, 45% cricket, 29% hockey, 48% badminton. 18% play nothing, 5% cricket & hockey, 27% cricket & badminton. Find number of people playing only badminton:",
+    "options": [
+      "(a) 60",
+      "(b) 40",
+      "(c) 70",
+      "(d) 100"
+    ],
+    "correctIndex": 3,
+    "explanation": "केवल बैडमिंटन खेलने वालों की संख्या = 100.",
+    "topic": "Venn Diagram & Sets"
+  }
+];
+    // State Variables
+    let currentQIndex = 0;
+    let selectedLanguage = 'both';
+    let userAnswers = {}; // { qId: { selected: number|null, review: boolean, timeSpent: number } }
+    let testRemainingSeconds = 120 * 60; // 60 minutes
+    let testTimerInterval = null;
+    let qTimerInterval = null;
+    let currentQTimeSpent = 0;
+    let isTestSubmitted = false;
+
+    // Initialize State
+    QUESTIONS.forEach(q => {
+      userAnswers[q.id] = { selected: null, review: false, timeSpent: 0, visited: false };
+    });
+
+    // Start Dual Timers
+    function startTimers() {
+      testTimerInterval = setInterval(() => {
+        if (testRemainingSeconds <= 0) {
+          clearInterval(testTimerInterval);
+          finalizeSubmission();
+          return;
+        }
+        testRemainingSeconds--;
+        updateTestTimerDisplay();
+      }, 1000);
+
+      qTimerInterval = setInterval(() => {
+        currentQTimeSpent++;
+        const currentQId = QUESTIONS[currentQIndex].id;
+        userAnswers[currentQId].timeSpent++;
+        document.getElementById('qTimerSec').textContent = currentQTimeSpent;
+        document.getElementById('qLiveTimerDisplay').textContent = currentQTimeSpent + 's';
+      }, 1000);
+    }
+
+    function updateTestTimerDisplay() {
+      const mins = Math.floor(testRemainingSeconds / 60);
+      const secs = testRemainingSeconds % 60;
+      const display = String(mins).padStart(2, '0') + ':' + String(secs).padStart(2, '0');
+      const el = document.getElementById('testTimerDisplay');
+      el.textContent = display;
+      if (testRemainingSeconds < 300) {
+        document.getElementById('testTimerBox').classList.add('timer-warning');
+      }
+    }
+
+    function renderQuestion(index) {
+      currentQIndex = index;
+      const q = QUESTIONS[index];
+      userAnswers[q.id].visited = true;
+      currentQTimeSpent = userAnswers[q.id].timeSpent || 0;
+      document.getElementById('qTimerSec').textContent = currentQTimeSpent;
+      document.getElementById('qLiveTimerDisplay').textContent = currentQTimeSpent + 's';
+
+      document.getElementById('qNumBadge').textContent = `Question ${index + 1} of ${QUESTIONS.length}`;
+      document.getElementById('qHindi').textContent = q.hindi;
+      document.getElementById('qEnglish').textContent = q.english;
+
+      applyLanguageVisibility();
+
+      // Render Options
+      const optionsContainer = document.getElementById('optionsContainer');
+      optionsContainer.innerHTML = '';
+      const letters = ['A', 'B', 'C', 'D'];
+
+      q.options.forEach((optText, optIdx) => {
+        const isSelected = userAnswers[q.id].selected === optIdx;
+        const optDiv = document.createElement('div');
+        optDiv.className = `option-item ${isSelected ? 'selected' : ''}`;
+        optDiv.onclick = () => selectOption(optIdx);
+        optDiv.innerHTML = `
+          <div class="opt-circle">${letters[optIdx]}</div>
+          <div class="opt-content">${optText}</div>
+        `;
+        optionsContainer.appendChild(optDiv);
+      });
+
+      // Update Navigation Buttons
+      document.getElementById('prevBtn').disabled = (index === 0);
+      const nextBtn = document.getElementById('nextBtn');
+      nextBtn.textContent = (index === QUESTIONS.length - 1) ? 'Finish & Review' : 'Save & Next →';
+
+      // Update Mark for Review Button state
+      const revBtn = document.getElementById('reviewBtn');
+      if (userAnswers[q.id].review) {
+        revBtn.textContent = 'Unmark Review';
+        revBtn.classList.remove('btn-warning');
+        revBtn.classList.add('btn-secondary');
+      } else {
+        revBtn.textContent = 'Mark for Review';
+        revBtn.classList.add('btn-warning');
+        revBtn.classList.remove('btn-secondary');
+      }
+
+      renderPalette();
+    }
+
+    function selectOption(optIdx) {
+      const qId = QUESTIONS[currentQIndex].id;
+      userAnswers[qId].selected = optIdx;
+      renderQuestion(currentQIndex);
+    }
+
+    function clearSelection() {
+      const qId = QUESTIONS[currentQIndex].id;
+      userAnswers[qId].selected = null;
+      renderQuestion(currentQIndex);
+    }
+
+    function toggleReview() {
+      const qId = QUESTIONS[currentQIndex].id;
+      userAnswers[qId].review = !userAnswers[qId].review;
+      renderQuestion(currentQIndex);
+    }
+
+    function nextQuestion() {
+      if (currentQIndex < QUESTIONS.length - 1) {
+        renderQuestion(currentQIndex + 1);
+      } else {
+        promptSubmit();
+      }
+    }
+
+    function prevQuestion() {
+      if (currentQIndex > 0) {
+        renderQuestion(currentQIndex - 1);
+      }
+    }
+
+    function jumpToQuestion(index) {
+      renderQuestion(index);
+    }
+
+    function setLanguage(lang) {
+      selectedLanguage = lang;
+      document.querySelectorAll('.lang-tab').forEach(t => t.classList.remove('active'));
+      event.target.classList.add('active');
+      applyLanguageVisibility();
+    }
+
+    function applyLanguageVisibility() {
+      const hi = document.getElementById('qHindi');
+      const en = document.getElementById('qEnglish');
+      if (selectedLanguage === 'both') {
+        hi.style.display = 'block';
+        en.style.display = 'block';
+      } else if (selectedLanguage === 'hindi') {
+        hi.style.display = 'block';
+        en.style.display = 'none';
+      } else {
+        hi.style.display = 'none';
+        en.style.display = 'block';
+      }
+    }
+
+        function openPaletteModal() {
+      renderPaletteModal();
+      document.getElementById('paletteModal').style.display = 'flex';
+    }
+
+    function closePaletteModal() {
+      document.getElementById('paletteModal').style.display = 'none';
+    }
+
+    function renderPaletteModal() {
+      const palette = document.getElementById('paletteModalGrid');
+      if (!palette) return;
+      palette.innerHTML = '';
+      let attemptedCount = 0;
+      let reviewCount = 0;
+      let skippedCount = 0;
+
+      QUESTIONS.forEach((q, idx) => {
+        const state = userAnswers[q.id];
+        const btn = document.createElement('button');
+        btn.className = 'q-badge-btn';
+        btn.textContent = idx + 1;
+        btn.title = 'Question ' + (idx + 1);
+
+        if (idx === currentQIndex) btn.classList.add('current');
+
+        if (state.review && state.selected !== null) {
+          btn.classList.add('status-review-attempted');
+          attemptedCount++;
+          reviewCount++;
+        } else if (state.review) {
+          btn.classList.add('status-review');
+          reviewCount++;
+        } else if (state.selected !== null) {
+          btn.classList.add('status-attempted');
+          attemptedCount++;
+        } else if (state.visited) {
+          btn.classList.add('status-skipped');
+          skippedCount++;
+        }
+
+        btn.onclick = () => {
+          jumpToQuestion(idx);
+          closePaletteModal();
+        };
+        palette.appendChild(btn);
+      });
+
+      const ans = document.getElementById('palModalAns');
+      if (ans) ans.textContent = attemptedCount;
+      const rev = document.getElementById('palModalRev');
+      if (rev) rev.textContent = reviewCount;
+      const skp = document.getElementById('palModalSkip');
+      if (skp) skp.textContent = skippedCount;
+      const hdrBadge = document.getElementById('headerAttemptedBadge');
+      if (hdrBadge) hdrBadge.textContent = `${attemptedCount}/${QUESTIONS.length}`;
+    }
+
+    function renderPalette() {
+      renderPaletteModal();
+    }
+
+
+    function promptSubmit() {
+      let attempted = 0;
+      let review = 0;
+      QUESTIONS.forEach(q => {
+        if (userAnswers[q.id].selected !== null) attempted++;
+        if (userAnswers[q.id].review) review++;
+      });
+      const unattempted = QUESTIONS.length - attempted;
+
+      document.getElementById('modalSummaryStats').innerHTML = `
+        <div style="display:flex; justify-content:space-between; margin-bottom:4px;"><span>Attempted:</span><strong>${attempted}</strong></div>
+        <div style="display:flex; justify-content:space-between; margin-bottom:4px;"><span>Unattempted:</span><strong>${unattempted}</strong></div>
+        <div style="display:flex; justify-content:space-between;"><span>Marked for Review:</span><strong>${review}</strong></div>
+      `;
+      document.getElementById('confirmModal').style.display = 'flex';
+    }
+
+    function closeModal() {
+      document.getElementById('confirmModal').style.display = 'none';
+    }
+
+    function finalizeSubmission() {
+      closeModal();
+      clearInterval(testTimerInterval);
+      clearInterval(qTimerInterval);
+      isTestSubmitted = true;
+
+      // Calculate Results
+      let correct = 0;
+      let wrong = 0;
+      let skipped = 0;
+      let totalTime = 0;
+
+      QUESTIONS.forEach(q => {
+        const ans = userAnswers[q.id];
+        totalTime += ans.timeSpent;
+        if (ans.selected === null) {
+          skipped++;
+        } else if (ans.selected === q.correctIndex) {
+          correct++;
+        } else {
+          wrong++;
+        }
+      });
+
+      const totalAttempted = correct + wrong;
+      const accuracy = totalAttempted > 0 ? Math.round((correct / totalAttempted) * 100) : 0;
+      const score = correct; // 1 mark each
+
+      document.getElementById('finalScore').textContent = score;
+      document.getElementById('maxScore').textContent = QUESTIONS.length;
+      document.getElementById('statAccuracy').textContent = accuracy + '%';
+      document.getElementById('statCorrect').textContent = correct;
+      document.getElementById('statWrong').textContent = wrong;
+      document.getElementById('statSkipped').textContent = skipped;
+
+      const mins = Math.floor(totalTime / 60);
+      const secs = totalTime % 60;
+      document.getElementById('statTime').textContent = `${mins}m ${secs}s`;
+
+      document.getElementById('countAll').textContent = QUESTIONS.length;
+      document.getElementById('countCorrect').textContent = correct;
+      document.getElementById('countWrong').textContent = wrong;
+      document.getElementById('countSkipped').textContent = skipped;
+
+      renderReviewTable('all');
+
+      document.getElementById('quizScreen').style.display = 'none';
+      document.getElementById('resultsScreen').style.display = 'block';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function renderReviewTable(filter) {
+      const tbody = document.getElementById('reviewTableBody');
+      tbody.innerHTML = '';
+      const letters = ['A', 'B', 'C', 'D'];
+
+      QUESTIONS.forEach((q, idx) => {
+        const ans = userAnswers[q.id];
+        let status = 'skipped';
+        if (ans.selected !== null) {
+          status = (ans.selected === q.correctIndex) ? 'correct' : 'wrong';
+        }
+
+        if (filter !== 'all' && status !== filter) return;
+
+        const tr = document.createElement('tr');
+        const userOptText = ans.selected !== null ? `${letters[ans.selected]}: ${q.options[ans.selected]}` : '— (Skipped)';
+        const correctOptText = `${letters[q.correctIndex]}: ${q.options[q.correctIndex]}`;
+
+        let statusBadge = `<span class="badge badge-skipped">Skipped</span>`;
+        if (status === 'correct') statusBadge = `<span class="badge badge-correct">Correct</span>`;
+        if (status === 'wrong') statusBadge = `<span class="badge badge-wrong">Wrong</span>`;
+
+        tr.innerHTML = `
+          <td><strong>#${idx + 1}</strong></td>
+          <td>
+            <div style="font-weight:600; margin-bottom:4px;">${q.hindi}</div>
+            <div style="font-size:0.85rem; color:#475569;">${q.english}</div>
+            <button class="sol-toggle" onclick="toggleSolution(${q.id})">Show Solution</button>
+            <div class="solution-box" id="sol_${q.id}">
+              💡 <strong>हल / Explanation:</strong> ${q.explanation}
+            </div>
+          </td>
+          <td style="color:${status === 'correct' ? '#16a34a' : status === 'wrong' ? '#dc2626' : '#64748b'}; font-weight:600;">
+            ${userOptText}
+          </td>
+          <td style="color:#16a34a; font-weight:600;">
+            ${correctOptText}
+          </td>
+          <td>${statusBadge}</td>
+          <td style="font-weight:600; font-variant-numeric:tabular-nums;">${ans.timeSpent}s</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function toggleSolution(qId) {
+      const box = document.getElementById('sol_' + qId);
+      const isVisible = box.style.display === 'block';
+      box.style.display = isVisible ? 'none' : 'block';
+    }
+
+    function filterReviewTable(filter) {
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      event.target.classList.add('active');
+      renderReviewTable(filter);
+    }
+
+    function restartQuiz() {
+      QUESTIONS.forEach(q => {
+        userAnswers[q.id] = { selected: null, review: false, timeSpent: 0, visited: false };
+      });
+      currentQIndex = 0;
+      testRemainingSeconds = 120 * 60;
+      isTestSubmitted = false;
+      document.getElementById('resultsScreen').style.display = 'none';
+      document.getElementById('quizScreen').style.display = 'grid';
+      renderQuestion(0);
+      startTimers();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Keyboard navigation (Arrow keys, numbers)
+    window.addEventListener('keydown', (e) => {
+      if (isTestSubmitted) return;
+      if (e.key === 'ArrowRight') nextQuestion();
+      if (e.key === 'ArrowLeft') prevQuestion();
+      if (['1', '2', '3', '4'].includes(e.key)) selectOption(parseInt(e.key) - 1);
+    });
+
+    // Boot App
+    renderQuestion(0);
+    startTimers();
+  </script>
+</body>
+</html>
